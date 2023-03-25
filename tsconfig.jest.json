@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist/jest",
+    "allowJs": true,                          /* Allow javascript files to be compiled. Our Testcafe tests import build-scripts*/
+    "skipLibCheck": true,                     /* Skip type checking of declaration files. This is needed for jest & testcafe because both declare test type definitions as global*/
+    "types": [
+      "jest",
+      "node",
+    ],
+    "sourceMap": true
+  },
+  "include": [
+    "./src/**/*.spec.ts"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "target": "es6",
+    "downlevelIteration": true,
+    "sourceMap": false,
+    "types": ["node"]
+  },
+  "include": [
+    "./src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/__test__/**/*.ts",
+    "src/**/*.spec.ts",
+  ]
+}
