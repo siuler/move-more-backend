@@ -51,4 +51,18 @@ describe("server", () => {
         expect(mockFastifyInstance.route).toBeCalledWith(route2);
         expect(mockFastifyInstance.route).toBeCalledWith(route3);
     });
+
+    it("should stop server", async () => {
+        //given
+        const server = new MoveMoreServer([]);
+        await server.start();
+
+        //when
+        server.stop();
+
+        //then
+        expect(fastify).toBeCalledTimes(1);
+        expect(fastify).toBeCalledWith({});
+        expect(mockFastifyInstance.close).toBeCalled();
+    });
 });

@@ -1,23 +1,22 @@
 import { HealthController } from "../controller/health/health.controller";
 import fetch from "node-fetch";
 import { MoveMoreServer } from "./server";
+import { FastifyReply, FastifyRequest } from "fastify";
 
-jest.mock("../controller/health/health.controller");
-
-describe("server", () => {
+describe("server - this test ensures that the server actually calls the controllers when routes are requested", () => {
   it("should register health endpoint", async () => {
     //given
     const healthController = new HealthController();
-    jest
-      .mocked(healthController)
-      .health.mockImplementation((req, reply) => reply.send(200));
-
+    // @ts-ignore
+    const healthSpy = jest.spyOn(healthController, 'health').mockImplementation((request: FastifyRequest, reply: FastifyReply) => {
+      reply.code(200).send();
+    });
     await new MoveMoreServer([healthController]).start();
 
     //when
     await fetch("http://0.0.0.0:8080/health");
 
     //then
-    expect(healthController.health).toBeCalledTimes(1);
+    expect(healthSpy).toBeCalledTimes(1);
   });
 });
