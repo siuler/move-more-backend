@@ -15,6 +15,7 @@ describe("health controller", () => {
       expect(routes).toContainEqual({url: '/health', method: 'GET', handler: healthController.health});
     });
   });
+
   it('should return 200 ok and "ok" in body', async () => {
     //given
     const mockRequest = makeMockRequest();

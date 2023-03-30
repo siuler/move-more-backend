@@ -1,5 +1,8 @@
 import { HealthController } from "./controller/health/health.controller";
 import { MoveMoreServer } from "./server/server";
+import { install } from "./installer/install";
+
+await install();
 
 const controllers = [
 	new HealthController()
