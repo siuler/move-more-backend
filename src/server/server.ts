@@ -1,5 +1,6 @@
 import fastify, { FastifyInstance } from "fastify";
 import { RouteTarget } from "../controller/route-target";
+import { fastifyErrorHandler } from "./middleware/error-handler";
 
 export class MoveMoreServer {
     private fastifyInstance: FastifyInstance;
@@ -8,6 +9,7 @@ export class MoveMoreServer {
         this.fastifyInstance = fastify({
             keepAliveTimeout: 10000,
         });
+        this.fastifyInstance.setErrorHandler(fastifyErrorHandler);
         this.registerRoutes();
     }
 

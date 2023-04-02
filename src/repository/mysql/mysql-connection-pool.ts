@@ -1,10 +1,17 @@
-import { createPool, Pool, PoolOptions } from "mysql2/promise";
+import { createPool, Pool } from "mysql2/promise";
+import * as applicationConfig from "../../config/config.json";
 
 
 export class MysqlConnectionPool {
 	private static connectionPool: Pool;
-	public static async initialize(poolOptions: PoolOptions) {
-		MysqlConnectionPool.connectionPool = createPool(poolOptions);
+	public static async initialize() {
+		MysqlConnectionPool.connectionPool = createPool({
+			host: applicationConfig.database.host,
+			port: applicationConfig.database.port,
+			user: applicationConfig.database.user,
+			password: applicationConfig.database.password,
+			database: applicationConfig.database.database,
+		});
 	}
 
 	public static getInstance(): Pool {

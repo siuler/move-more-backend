@@ -6,13 +6,16 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "lint:fix": "eslint --max-warnings 0 \"./**/*.ts\" --fix",
-    "test": "jest --config=jest.config.js"
+    "test": "jest --config=jest.config.js",
+    "setup": "nvm use && npm ci"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@jest/globals": "^29.5.0",
+    "@types/bcrypt": "^5.0.0",
     "@types/jest": "^29.5.0",
+    "@types/jsonwebtoken": "^9.0.1",
     "@types/node": "^18.15.3",
     "@types/node-fetch": "^2.6.2",
     "@typescript-eslint/eslint-plugin": "^5.56.0",
@@ -28,7 +31,9 @@
     "typescript": "^5.0.2"
   },
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "fastify": "^4.14.1",
+    "jsonwebtoken": "^9.0.0",
     "mysql2": "^3.2.0"
   }
 }
