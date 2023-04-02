@@ -5,8 +5,7 @@ import { UserService } from "../../service/user/user-service";
 import { BadRequestError } from "../error/bad-request-error";
 import { ConflictError } from "../error/conflict-error";
 import { ValidationError } from "../../general/validation-error";
-import { LoginPayload, RegisterPayload } from "../../domain/user/user-controller-payload";
-import * as jwt from 'jsonwebtoken';
+import { LoginPayload, RegisterPayload } from "../../domain/user/user";
 import { UserExistsError, UserNotFoundError, WrongPasswordError } from "../../domain/user/user-error";
 
 export class UserController implements RouteTarget {

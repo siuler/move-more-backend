@@ -1,4 +1,4 @@
-import { InsertUserPayload, IUser, UserId } from "../../domain/user/user-database-payload";
+import { InsertUserPayload, IUser, UserId } from "../../domain/user/user";
 import { Pool } from "mysql2/promise";
 import { UserExistsError, UserNotFoundError } from "../../domain/user/user-error";
 

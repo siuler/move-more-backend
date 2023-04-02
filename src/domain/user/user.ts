@@ -1,5 +1,16 @@
 import { RowDataPacket } from "mysql2";
 
+export type RegisterPayload = {
+	username: string;
+	email: string;
+	password: string;
+};
+
+export type LoginPayload = {
+	usernameOrEmail: string;
+	password: string;
+};
+
 export type UserId = number;
 export interface IUser extends RowDataPacket {
 	id: UserId;

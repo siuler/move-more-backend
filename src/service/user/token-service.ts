@@ -1,5 +1,5 @@
 import * as jwt from "jsonwebtoken";
-import { UserId } from "../../domain/user/user-database-payload";
+import { UserId } from "../../domain/user/user";
 import { AuthTokenPair } from "../../domain/token/auth-token-pair";
 import { TokenRepository } from "../../repository/user/token-repository";
 import { Secret } from "jsonwebtoken";

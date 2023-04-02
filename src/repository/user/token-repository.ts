@@ -1,4 +1,4 @@
-import { UserId } from "../../domain/user/user-database-payload";
+import { UserId } from "../../domain/user/user";
 import { Pool } from "mysql2/promise";
 import { IRefreshToken } from "../../domain/token/auth-token-pair";
 import { TokenNotFoundError } from "../../domain/token/token-not-found-error";

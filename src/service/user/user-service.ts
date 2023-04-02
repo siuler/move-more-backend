@@ -1,6 +1,6 @@
 import { UserRepository } from "../../repository/user/user-repository";
 import { compare, genSalt, hash } from 'bcrypt';
-import { InsertUserPayload, IUser, UserId } from "../../domain/user/user-database-payload";
+import { InsertUserPayload, IUser, UserId } from "../../domain/user/user";
 import { ValidationError } from "../../general/validation-error";
 import { WrongPasswordError } from "../../domain/user/user-error";
 import { TokenService } from "./token-service";
