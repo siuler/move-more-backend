@@ -1,19 +1,19 @@
 import * as applicationConfig from '../../config/config.json';
-import { createConnection } from "mysql2/promise";
+import { createConnection } from 'mysql2/promise';
 
 export async function createDatabaseScheme() {
-	const databaseName = applicationConfig.database.database;
-	const connection = await createConnection({
-		host: applicationConfig.database.host,
-		port: applicationConfig.database.port,
-		user: applicationConfig.database.user,
-		password: applicationConfig.database.password,
-	});
+    const databaseName = applicationConfig.database.database;
+    const connection = await createConnection({
+        host: applicationConfig.database.host,
+        port: applicationConfig.database.port,
+        user: applicationConfig.database.user,
+        password: applicationConfig.database.password,
+    });
 
-	await connection.execute(`CREATE DATABASE IF NOT EXISTS ${databaseName} CHARACTER SET utf8`);
-	await connection.changeUser({database: databaseName});
+    await connection.execute(`CREATE DATABASE IF NOT EXISTS ${databaseName} CHARACTER SET utf8`);
+    await connection.changeUser({ database: databaseName });
 
-	await connection.execute(`
+    await connection.execute(`
 		CREATE TABLE IF NOT EXISTS user(
 		    id MEDIUMINT UNSIGNED AUTO_INCREMENT,
 		    email VARCHAR(255) UNIQUE,
@@ -26,7 +26,7 @@ export async function createDatabaseScheme() {
 		)
 	`);
 
-	await connection.execute(`
+    await connection.execute(`
 		CREATE TABLE IF NOT EXISTS refresh_token(
 		    user_id MEDIUMINT UNSIGNED,
 		    refresh_token TEXT,

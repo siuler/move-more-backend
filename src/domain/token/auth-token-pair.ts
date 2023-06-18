@@ -1,10 +1,10 @@
-import { RowDataPacket } from "mysql2";
+import { RowDataPacket } from 'mysql2';
 
 export type AuthTokenPair = {
-	accessToken: string;
-	refreshToken: string;
-}
+    accessToken: string;
+    refreshToken: string;
+};
 
 export interface IRefreshToken extends RowDataPacket {
-	refresh_token: string;
+    refresh_token: string;
 }

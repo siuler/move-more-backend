@@ -1,4 +1,4 @@
-import type { Config } from "jest";
+import type { Config } from 'jest';
 
 const config: Config = {
     rootDir: __dirname,
@@ -9,7 +9,7 @@ const config: Config = {
     transformIgnorePatterns: ['node_modules/(?!node-fetch|fetch-blob|data-uri-to-buffer|formdata-polyfill)'],
     testMatch: ['**/*.spec.ts'],
     transform: {
-        '^.+\\.ts$': ['ts-jest', {isolatedModules: true, useESM: true}]
+        '^.+\\.ts$': ['ts-jest', { isolatedModules: true, useESM: true }],
     },
 };
 

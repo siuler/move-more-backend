@@ -1,6 +1,6 @@
-import fastify, { FastifyInstance } from "fastify";
-import { RouteTarget } from "../controller/route-target";
-import { fastifyErrorHandler } from "./middleware/error-handler";
+import fastify, { FastifyInstance } from 'fastify';
+import { RouteTarget } from '../controller/route-target';
+import { fastifyErrorHandler } from './middleware/error-handler';
 
 export class MoveMoreServer {
     private fastifyInstance: FastifyInstance;
@@ -14,7 +14,7 @@ export class MoveMoreServer {
     }
 
     public async start() {
-        await this.fastifyInstance.listen({port: 8080, host: '0.0.0.0'});
+        await this.fastifyInstance.listen({ port: 8080, host: '0.0.0.0' });
     }
 
     public async stop() {

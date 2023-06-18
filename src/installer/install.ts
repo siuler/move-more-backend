@@ -1,5 +1,5 @@
-import { createDatabaseScheme } from "./mysql/create-database-scheme";
+import { createDatabaseScheme } from './mysql/create-database-scheme';
 
 export async function install() {
-	await createDatabaseScheme();
+    await createDatabaseScheme();
 }
