@@ -7,6 +7,7 @@ import { UserRepository } from "./repository/user/user-repository";
 import { MysqlConnectionPool } from "./repository/mysql/mysql-connection-pool";
 import { TokenService } from "./service/user/token-service";
 import { TokenRepository } from "./repository/user/token-repository";
+import { TokenController } from "./controller/token/token.controller";
 
 install().then(async () => {
 	await MysqlConnectionPool.initialize();
@@ -20,7 +21,8 @@ install().then(async () => {
 
 	const controllers = [
 		new HealthController(),
-		new UserController(userService)
+		new UserController(userService),
+		new TokenController(tokenService),
 	];
 
 	const server = new MoveMoreServer(controllers);

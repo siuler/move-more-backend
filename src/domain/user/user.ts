@@ -11,6 +11,11 @@ export type LoginPayload = {
 	password: string;
 };
 
+export type RefreshTokenPayload = {
+	refreshToken: string;
+	userId: UserId;
+};
+
 export type UserId = number;
 export interface IUser extends RowDataPacket {
 	id: UserId;

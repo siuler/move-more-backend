@@ -26,7 +26,7 @@ export class UserService {
 		const passwordsMatch = await compare(password, user.password_hash);
 
 		if (passwordsMatch === true) {
-			const tokenPair = this.tokenService.generateTokenPair(user.id);
+			const tokenPair = this.tokenService.generateAndStoreTokenPair(user.id);
 			return tokenPair;
 		}
 

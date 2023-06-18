@@ -1,22 +1,22 @@
 export const REGISTER_SCHEMA = {
 	body: {
 		type: 'object',
-		required: ['email', 'username', 'password'],
 		properties: {
 			email: { type: 'string' },
 			username: { type: 'string' },
 			password: { type: 'string' },
-		}
+		},
+		required: ['email', 'username', 'password'],
 	}
 };
 
 export const LOGIN_SCHEMA = {
 	body: {
 		type: 'object',
-		required: ['usernameOrEmail', 'password'],
 		properties: {
-			emailOrUsername: { type: 'string' },
+			usernameOrEmail: { type: 'string' },
 			password: { type: 'string' },
-		}
+		},
+		required: ['usernameOrEmail', 'password'],
 	}
-}
+};

@@ -4,6 +4,7 @@ import { UserExistsError, UserNotFoundError } from "../../domain/user/user-error
 
 const STMT_INSERT_USER = `INSERT INTO user(email, username, password_hash) VALUES(?,?,?)`;
 
+const QUERY_FIND_USER_BY_ID = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE id = ?`;
 const QUERY_FIND_USER_BY_NAME = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE username = ?`;
 const QUERY_FIND_USER_BY_EMAIL = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE email = ?`;
 
@@ -22,6 +23,14 @@ export class UserRepository {
 			}
 			throw error;
 		}
+	}
+
+	public async findById(userId: UserId): Promise<IUser> {
+		const [foundUsers] = await this.connectionPool.query<IUser[]>(QUERY_FIND_USER_BY_ID, [userId]);
+		if (foundUsers.length == 0) {
+			throw new UserNotFoundError('could not find user by userId');
+		}
+		return foundUsers[0];
 	}
 
 	public async findByName(username: string): Promise<IUser> {
