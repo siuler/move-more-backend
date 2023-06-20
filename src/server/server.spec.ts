@@ -9,7 +9,7 @@ describe('server', () => {
     let mockFastifyInstance: FastifyInstance;
     beforeEach(() => {
         mockFastifyInstance = makeMockFastifyInstance();
-        jest.mocked(fastify).mockReturnValue(mockFastifyInstance);
+        jest.mocked(fastify).mockReturnValue(mockFastifyInstance as any);
     });
 
     it('should start server on port 8080', async () => {
@@ -21,7 +21,9 @@ describe('server', () => {
 
         //then
         expect(fastify).toBeCalledTimes(1);
-        expect(fastify).toBeCalledWith({});
+        expect(fastify).toBeCalledWith({
+            keepAliveTimeout: 1000,
+        });
         expect(mockFastifyInstance.listen).toBeCalledWith({
             port: 8080,
             host: '0.0.0.0',
@@ -61,8 +63,6 @@ describe('server', () => {
         server.stop();
 
         //then
-        expect(fastify).toBeCalledTimes(1);
-        expect(fastify).toBeCalledWith({});
         expect(mockFastifyInstance.close).toBeCalled();
     });
 });

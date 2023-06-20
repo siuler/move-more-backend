@@ -6,7 +6,7 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "lint:fix": "eslint --max-warnings 0 \"./**/*.ts\" --fix",
-    "test": "jest --config=jest.config.js",
+    "test": "jest --config=jest.config.ts",
     "setup": "nvm use && npm ci"
   },
   "author": "",

@@ -7,7 +7,7 @@ export class MoveMoreServer {
 
     constructor(private routeTargets: RouteTarget[]) {
         this.fastifyInstance = fastify({
-            keepAliveTimeout: 10000,
+            keepAliveTimeout: 1000,
         });
         this.fastifyInstance.setErrorHandler(fastifyErrorHandler);
         this.registerRoutes();
