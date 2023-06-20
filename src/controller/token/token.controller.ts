@@ -21,7 +21,7 @@ export class TokenController implements RouteTarget {
         try {
             const tokenPair = await this.tokenService.refreshToken(payload.userId, payload.refreshToken);
             reply.status(200).send(tokenPair);
-        } catch (error: any) {
+        } catch (error: unknown) {
             if (error instanceof InvalidTokenError || error instanceof TokenNotFoundError) {
                 throw new BadRequestError('refresh token is invalid');
             }

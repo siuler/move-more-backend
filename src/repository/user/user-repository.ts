@@ -14,7 +14,8 @@ export class UserRepository {
     public async create(user: InsertUserPayload): Promise<UserId> {
         try {
             const createdUser = await this.connectionPool.execute(STMT_INSERT_USER, [user.email, user.username, user.password_hash]);
-            return (createdUser[0] as any).insertId;
+            return (createdUser[0] as { insertId: number }).insertId;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             if (error.code && error.code === 'ER_DUP_ENTRY') {
                 throw new UserExistsError('email or username already exists');

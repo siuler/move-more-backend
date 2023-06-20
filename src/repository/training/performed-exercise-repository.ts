@@ -1,5 +1,4 @@
-import { ExerciseId, ExerciseSet } from '../../domain/exercise/exercise';
-import { UserId } from '../../domain/user/user';
+import { ExerciseSet } from '../../domain/exercise/exercise';
 import { Pool } from 'mysql2/promise';
 
 const STMT_INSERT_PERFORMED_EXERCISE = `INSERT INTO performed_exercise(user_id, exercise_id, repetitions) VALUES (?,?,?)`;

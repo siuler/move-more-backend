@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest, RouteOptions } from 'fastify';
+import { FastifyReply, RouteOptions } from 'fastify';
 import { RouteTarget } from '../route-target';
 import { TRAINING_ABSOLVED_SCHEMA } from './training-schema';
 import { TrainingService } from '../../service/training/training-service';

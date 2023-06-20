@@ -24,7 +24,7 @@ export class UserController implements RouteTarget {
         try {
             const tokenPair = await this.userService.login(payload.usernameOrEmail, payload.password);
             reply.status(200).send(tokenPair);
-        } catch (error: any) {
+        } catch (error: unknown) {
             if (error instanceof UserNotFoundError || error instanceof WrongPasswordError) {
                 throw new BadRequestError('username/email or password incorrect');
             }
@@ -37,7 +37,7 @@ export class UserController implements RouteTarget {
 
         try {
             await this.userService.register(payload.email, payload.username, payload.password);
-        } catch (error: any) {
+        } catch (error: unknown) {
             if (error instanceof ValidationError) {
                 throw new BadRequestError(error.message);
             }
