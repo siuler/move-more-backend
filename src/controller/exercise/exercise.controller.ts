@@ -1,27 +1,27 @@
 import { FastifyReply, RouteOptions } from 'fastify';
 import { RouteTarget } from '../route-target';
-import { TRAINING_ABSOLVED_SCHEMA } from './training-schema';
-import { TrainingService } from '../../service/training/training-service';
+import { TRAINING_ABSOLVED_SCHEMA } from './exercise-schema';
+import { ExerciseService } from '../../service/exercise/exercise-service';
 import { ExercisePerformedParams, ExercisePerformedPayload, ExerciseSet } from '../../domain/exercise/exercise';
 import { AuthenticatedFastifyRequest } from '../../server/middleware/authenticated-request';
 import { authenticate } from '../../server/middleware/authentication';
 
-export class TraingingController implements RouteTarget {
-    constructor(private trainingService: TrainingService) {}
+export class ExerciseController implements RouteTarget {
+    constructor(private exerciseService: ExerciseService) {}
 
     public getRoutes(): RouteOptions[] {
         return <RouteOptions[]>[
             {
-                url: '/training/:exerciseId',
+                url: '/exercise/:exerciseId',
                 method: 'POST',
                 preValidation: authenticate,
-                handler: this.trainingAbsolved.bind(this),
+                handler: this.exerciseAbsolved.bind(this),
                 schema: TRAINING_ABSOLVED_SCHEMA,
             },
         ];
     }
 
-    public async trainingAbsolved(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
+    public async exerciseAbsolved(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
         const routeParams = request.params as ExercisePerformedParams;
         const payload = request.body as ExercisePerformedPayload;
 
@@ -31,7 +31,7 @@ export class TraingingController implements RouteTarget {
             repetitions: payload.repetitions,
         };
 
-        await this.trainingService.handleExercisePerformed(exerciseSet);
+        await this.exerciseService.handleExerciseAbsolved(exerciseSet);
         reply.status(200).send();
     }
 }
