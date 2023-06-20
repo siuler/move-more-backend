@@ -8,6 +8,9 @@ import { MysqlConnectionPool } from './repository/mysql/mysql-connection-pool';
 import { TokenService } from './service/user/token-service';
 import { TokenRepository } from './repository/user/token-repository';
 import { TokenController } from './controller/token/token.controller';
+import { TraingingController } from './controller/training/training.controller';
+import { PerformedExerciseRepository } from './repository/training/performed-exercise-repository';
+import { TrainingService } from './service/training/training-service';
 
 install().then(async () => {
     await MysqlConnectionPool.initialize();
@@ -19,7 +22,15 @@ install().then(async () => {
     const userRepository = new UserRepository(connectionPool);
     const userService = new UserService(userRepository, tokenService);
 
-    const controllers = [new HealthController(), new UserController(userService), new TokenController(tokenService)];
+    const performedExerciseRepository = new PerformedExerciseRepository(connectionPool);
+    const trainingService = new TrainingService(performedExerciseRepository);
+
+    const controllers = [
+        new HealthController(),
+        new UserController(userService),
+        new TokenController(tokenService),
+        new TraingingController(trainingService),
+    ];
 
     const server = new MoveMoreServer(controllers);
 

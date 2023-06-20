@@ -10,7 +10,7 @@ const QUERY_FIND_REFRESH_TOKEN = `SELECT refresh_token FROM refresh_token WHERE 
 export class TokenRepository {
     constructor(private connectionPool: Pool) {}
 
-    public async store(userId: UserId, refreshToken: string): Promise<void> {
+    public async persist(userId: UserId, refreshToken: string): Promise<void> {
         await this.connectionPool.execute(STMT_INSERT_REFRESH_TOKEN, [userId, refreshToken]);
     }
 

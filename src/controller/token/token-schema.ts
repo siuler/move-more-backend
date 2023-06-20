@@ -5,6 +5,6 @@ export const REFRESH_TOKEN_SCHEMA = {
             refreshToken: { type: 'string' },
             userId: { type: 'number' },
         },
-        required: ['refreshToken'],
+        required: ['refreshToken', 'userId'],
     },
 };

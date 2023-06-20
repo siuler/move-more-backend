@@ -1,4 +1,5 @@
 import * as jwt from 'jsonwebtoken';
+import * as crypto from 'crypto';
 import { UserId } from '../../domain/user/user';
 import { AuthTokenPair } from '../../domain/token/auth-token-pair';
 import { TokenRepository } from '../../repository/user/token-repository';
@@ -13,7 +14,7 @@ export class TokenService {
             accessToken: this.generateJWTToken(userId),
             refreshToken: this.generateRefreshToken(),
         };
-        await this.tokenRepository.store(userId, tokenPair.refreshToken);
+        await this.tokenRepository.persist(userId, tokenPair.refreshToken);
         return tokenPair;
     }
 
