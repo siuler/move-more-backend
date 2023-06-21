@@ -1,6 +1,5 @@
 import { ExerciseRepository } from './repository/exercise-repository';
 import { Exercise, ExerciseId, ExerciseSet } from './exercise';
-import { ExerciseNotAddedError } from './exercise-error';
 import { UserId } from '../user/user';
 
 export class ExerciseService {
@@ -15,12 +14,7 @@ export class ExerciseService {
     }
 
     public async handleExerciseAbsolved(exerciseSet: ExerciseSet) {
-        const userHasAddedExercise = await this.exerciseRepository.hasUserSelectedExercise(exerciseSet.userId, exerciseSet.exerciseId);
-
-        if (!userHasAddedExercise) {
-            throw new ExerciseNotAddedError();
-        }
-
+        await this.exerciseRepository.updateLastTrained(exerciseSet.userId, exerciseSet.exerciseId);
         return this.exerciseRepository.persistAbsolvedExercise(exerciseSet);
     }
 }

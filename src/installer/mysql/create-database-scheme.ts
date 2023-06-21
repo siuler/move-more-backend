@@ -79,6 +79,7 @@ async function createSelectedExerciseTable(connection: Connection) {
 		CREATE TABLE IF NOT EXISTS selected_exercise(
 			user_id ${USER_ID_TYPE},
 			exercise_id ${EXERCISE_ID_TYPE},
+			last_trained TIMESTAMP NULL,
 			PRIMARY KEY(user_id, exercise_id),
 			FOREIGN KEY (user_id)
 				REFERENCES user(id)

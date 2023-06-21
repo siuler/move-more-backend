@@ -1,24 +1,26 @@
 import { Exercise, ExerciseId, ExerciseSet } from '../exercise';
 import { Pool } from 'mysql2/promise';
 import { UserId } from '../../user/user';
-import { IRowCount } from '../../../repository/mysql/common-types';
-import { ExerciseAlreadySelectedError, ExerciseDoesNotExistError } from '../exercise-error';
+import { IUpdateResponse } from '../../../repository/mysql/common-types';
+import { ExerciseAlreadySelectedError, ExerciseDoesNotExistError, ExerciseNotAddedError } from '../exercise-error';
 
 const STMT_SELECT_EXERCISE = `INSERT INTO selected_exercise(user_id, exercise_id) VALUES(?,?)`;
 const STMT_INSERT_PERFORMED_EXERCISE = `INSERT INTO performed_exercise(user_id, exercise_id, repetitions) VALUES (?,?,?)`;
+const STMT_UPDATE_LAST_TRAINED = `UPDATE selected_exercise SET last_trained=NOW() WHERE user_id=? AND exercise_id=?`;
 
 const QUERY_GET_SELECTED_EXERCISES = `
-    SELECT 
+    SELECT
+        exercise.id as id,
         exercise.name as name, 
         exercise.description as description 
     FROM selected_exercise 
         RIGHT JOIN exercise
         ON selected_exercise.exercise_id = exercise.id
-    WHERE selected_exercise.user_id = ?`;
-const QUERY_HAS_USER_SELECTED_EXERCISE = `SELECT COUNT(*) as rowCount FROM selected_exercise WHERE user_id=? and exercise_id=?`;
+    WHERE selected_exercise.user_id = ?
+    ORDER BY selected_exercise.last_trained DESC`;
 
 export class ExerciseRepository {
-    constructor(private connectionPool: Pool) { }
+    constructor(private connectionPool: Pool) {}
 
     public async selectExercise(userId: UserId, exerciseId: ExerciseId) {
         try {
@@ -39,9 +41,11 @@ export class ExerciseRepository {
         return exercises;
     }
 
-    public async hasUserSelectedExercise(userId: UserId, exerciseId: ExerciseId): Promise<boolean> {
-        const [[rowCount]] = await this.connectionPool.query<IRowCount[]>(QUERY_HAS_USER_SELECTED_EXERCISE, [userId, exerciseId]);
-        return rowCount.rowCount > 0;
+    public async updateLastTrained(userId: UserId, exerciseId: ExerciseId) {
+        const updatedRows = await this.connectionPool.execute<IUpdateResponse>(STMT_UPDATE_LAST_TRAINED, [userId, exerciseId]);
+        if (updatedRows[0].changedRows <= 0) {
+            throw new ExerciseNotAddedError();
+        }
     }
 
     public async persistAbsolvedExercise(exerciseSet: ExerciseSet) {

@@ -1,5 +1,11 @@
-import { RowDataPacket } from 'mysql2';
+import { ResultSetHeader } from 'mysql2';
 
-export interface IRowCount extends RowDataPacket {
-    rowCount: number;
+export interface IUpdateResponse extends ResultSetHeader {
+    affectedRows: number;
+    changedRows: number;
+    fieldCount: number;
+    info: string;
+    insertId: number;
+    serverStatus: number;
+    warningStatus: number;
 }
