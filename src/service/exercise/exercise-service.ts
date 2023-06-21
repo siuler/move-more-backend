@@ -1,5 +1,5 @@
 import { ExerciseRepository } from '../../repository/exercise/exercise-repository';
-import { ExerciseId, ExerciseSet } from '../../domain/exercise/exercise';
+import { Exercise, ExerciseId, ExerciseSet } from '../../domain/exercise/exercise';
 import { ExerciseNotAddedError } from '../../domain/exercise/exercise-error';
 import { UserId } from '../../domain/user/user';
 
@@ -8,6 +8,10 @@ export class ExerciseService {
 
     public async selectExercise(userId: UserId, exerciseId: ExerciseId) {
         return this.exerciseRepository.selectExercise(userId, exerciseId);
+    }
+
+    public async getSelectedExercises(userId: UserId): Promise<Exercise[]> {
+        return this.exerciseRepository.getSelectedExercises(userId);
     }
 
     public async handleExerciseAbsolved(exerciseSet: ExerciseSet) {

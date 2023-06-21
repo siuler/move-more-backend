@@ -21,6 +21,12 @@ export class ExerciseController implements RouteTarget {
                 schema: SELECT_EXERCISE_SCHEMA,
             },
             {
+                url: '/exercise',
+                method: 'GET',
+                preValidation: authenticate,
+                handler: this.getSelectedExercise.bind(this),
+            },
+            {
                 url: '/exercise/train/:exerciseId',
                 method: 'POST',
                 preValidation: authenticate,
@@ -43,6 +49,11 @@ export class ExerciseController implements RouteTarget {
             throw error;
         }
         reply.status(200).send();
+    }
+
+    public async getSelectedExercise(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
+        const exercises = await this.exerciseService.getSelectedExercises(request.userId);
+        reply.status(200).send(exercises);
     }
 
     public async exerciseAbsolved(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
