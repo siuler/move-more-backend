@@ -1,4 +1,4 @@
-import { makeMockReply, makeMockRequest } from '../../../jest/controller-mocks';
+import { makeMockRequest, makeMockReply } from '../../../../jest/controller-mocks';
 import { UserController } from './user.controller';
 
 describe('user controller', () => {

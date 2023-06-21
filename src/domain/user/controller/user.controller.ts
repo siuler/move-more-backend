@@ -1,12 +1,12 @@
-import { RouteTarget } from '../route-target';
 import { FastifyReply, FastifyRequest, RouteOptions } from 'fastify';
 import { LOGIN_SCHEMA, REGISTER_SCHEMA } from './user-schema';
-import { UserService } from '../../service/user/user-service';
-import { BadRequestError } from '../error/bad-request-error';
-import { ConflictError } from '../error/conflict-error';
-import { ValidationError } from '../../general/validation-error';
-import { LoginPayload, RegisterPayload } from '../../domain/user/user';
-import { UserExistsError, UserNotFoundError, WrongPasswordError } from '../../domain/user/user-error';
+import { BadRequestError } from '../../../general/server/controller/error/bad-request-error';
+import { ConflictError } from '../../../general/server/controller/error/conflict-error';
+import { RouteTarget } from '../../../general/server/controller/route-target';
+import { ValidationError } from '../../../general/validation-error';
+import { LoginPayload, RegisterPayload } from '../user';
+import { UserNotFoundError, WrongPasswordError, UserExistsError } from '../user-error';
+import { UserService } from '../user-service';
 
 export class UserController implements RouteTarget {
     constructor(private userService: UserService) {}

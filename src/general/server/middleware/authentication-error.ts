@@ -1,4 +1,4 @@
-import { ControllerError } from '../../controller/error/controller-error';
+import { ControllerError } from '../controller/error/controller-error';
 
 export class AuthenticationError extends ControllerError {
     public readonly error: string = 'AuthenticationError';

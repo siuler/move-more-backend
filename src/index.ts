@@ -1,16 +1,16 @@
-import { HealthController } from './controller/health/health.controller';
-import { MoveMoreServer } from './server/server';
+import { HealthController } from './general/server/controller/health/health.controller';
+import { MoveMoreServer } from './general/server/server';
 import { install } from './installer/install';
-import { UserController } from './controller/user/user.controller';
-import { UserService } from './service/user/user-service';
-import { UserRepository } from './repository/user/user-repository';
+import { UserService } from './domain/user/user-service';
+import { UserRepository } from './domain/user/user-repository';
 import { MysqlConnectionPool } from './repository/mysql/mysql-connection-pool';
-import { TokenService } from './service/user/token-service';
-import { TokenRepository } from './repository/user/token-repository';
-import { TokenController } from './controller/token/token.controller';
-import { ExerciseController } from './controller/exercise/exercise.controller';
-import { ExerciseRepository } from './repository/exercise/exercise-repository';
-import { ExerciseService } from './service/exercise/exercise-service';
+import { TokenService } from './domain/token/token-service';
+import { TokenRepository } from './domain/token/token-repository';
+import { ExerciseRepository } from './domain/exercise/repository/exercise-repository';
+import { ExerciseService } from './domain/exercise/exercise-service';
+import { UserController } from './domain/user/controller/user.controller';
+import { TokenController } from './domain/token/controller/token.controller';
+import { ExerciseController } from './domain/exercise/controller/exercise.controller';
 
 install().then(async () => {
     await MysqlConnectionPool.initialize();

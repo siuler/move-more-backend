@@ -1,7 +1,7 @@
 import { MoveMoreServer } from './server';
 import fastify, { FastifyInstance } from 'fastify';
-import { makeMockFastifyInstance } from '../../jest/controller-mocks';
-import { RouteTarget } from '../controller/route-target';
+import { makeMockFastifyInstance } from '../../../jest/controller-mocks';
+import { RouteTarget } from './controller/route-target';
 
 jest.mock('fastify');
 

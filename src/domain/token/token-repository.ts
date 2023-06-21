@@ -1,7 +1,7 @@
-import { UserId } from '../../domain/user/user';
+import { UserId } from '../user/user';
 import { Pool } from 'mysql2/promise';
-import { IRefreshToken } from '../../domain/token/auth-token-pair';
-import { TokenNotFoundError } from '../../domain/token/token-error';
+import { IRefreshToken } from './auth-token-pair';
+import { TokenNotFoundError } from './token-error';
 
 const STMT_INSERT_REFRESH_TOKEN = `INSERT INTO refresh_token(user_id, refresh_token) VALUES(?,?) ON DUPLICATE KEY UPDATE refresh_token = VALUES(refresh_token)`;
 

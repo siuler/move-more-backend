@@ -1,8 +1,8 @@
-import { Exercise, ExerciseId, ExerciseSet } from '../../domain/exercise/exercise';
+import { Exercise, ExerciseId, ExerciseSet } from '../exercise';
 import { Pool } from 'mysql2/promise';
-import { UserId } from '../../domain/user/user';
-import { IRowCount } from '../mysql/common-types';
-import { ExerciseAlreadySelectedError, ExerciseDoesNotExistError } from '../../domain/exercise/exercise-error';
+import { UserId } from '../../user/user';
+import { IRowCount } from '../../../repository/mysql/common-types';
+import { ExerciseAlreadySelectedError, ExerciseDoesNotExistError } from '../exercise-error';
 
 const STMT_SELECT_EXERCISE = `INSERT INTO selected_exercise(user_id, exercise_id) VALUES(?,?)`;
 const STMT_INSERT_PERFORMED_EXERCISE = `INSERT INTO performed_exercise(user_id, exercise_id, repetitions) VALUES (?,?,?)`;

@@ -1,7 +1,7 @@
-import { ExerciseRepository } from '../../repository/exercise/exercise-repository';
-import { Exercise, ExerciseId, ExerciseSet } from '../../domain/exercise/exercise';
-import { ExerciseNotAddedError } from '../../domain/exercise/exercise-error';
-import { UserId } from '../../domain/user/user';
+import { ExerciseRepository } from './repository/exercise-repository';
+import { Exercise, ExerciseId, ExerciseSet } from './exercise';
+import { ExerciseNotAddedError } from './exercise-error';
+import { UserId } from '../user/user';
 
 export class ExerciseService {
     constructor(private exerciseRepository: ExerciseRepository) {}
@@ -15,7 +15,7 @@ export class ExerciseService {
     }
 
     public async handleExerciseAbsolved(exerciseSet: ExerciseSet) {
-        const userHasAddedExercise = await this.exerciseRepository.hasUserSelectedExercise(exerciseSet.userId, exerciseSet.userId);
+        const userHasAddedExercise = await this.exerciseRepository.hasUserSelectedExercise(exerciseSet.userId, exerciseSet.exerciseId);
 
         if (!userHasAddedExercise) {
             throw new ExerciseNotAddedError();

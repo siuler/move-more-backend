@@ -1,10 +1,10 @@
-import { UserRepository } from '../../repository/user/user-repository';
+import { UserRepository } from './user-repository';
 import { compare, genSalt, hash } from 'bcrypt';
-import { InsertUserPayload, IUser, UserId } from '../../domain/user/user';
+import { InsertUserPayload, IUser, UserId } from './user';
 import { ValidationError } from '../../general/validation-error';
-import { WrongPasswordError } from '../../domain/user/user-error';
-import { TokenService } from './token-service';
-import { AuthTokenPair } from '../../domain/token/auth-token-pair';
+import { WrongPasswordError } from './user-error';
+import { TokenService } from '../token/token-service';
+import { AuthTokenPair } from '../token/auth-token-pair';
 
 const EMAIL_VALIDATION_PATTERN =
     /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;

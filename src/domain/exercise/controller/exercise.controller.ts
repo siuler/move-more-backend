@@ -1,12 +1,12 @@
 import { FastifyReply, RouteOptions } from 'fastify';
-import { RouteTarget } from '../route-target';
+import { BadRequestError } from '../../../general/server/controller/error/bad-request-error';
+import { RouteTarget } from '../../../general/server/controller/route-target';
+import { AuthenticatedFastifyRequest } from '../../../general/server/middleware/authenticated-request';
+import { authenticate } from '../../../general/server/middleware/authentication';
+import { SelectExercisePayload, ExercisePerformedParams, ExercisePerformedPayload, ExerciseSet } from '../exercise';
+import { ExerciseAlreadySelectedError, ExerciseDoesNotExistError, ExerciseNotAddedError } from '../exercise-error';
+import { ExerciseService } from '../exercise-service';
 import { SELECT_EXERCISE_SCHEMA, TRAINING_ABSOLVED_SCHEMA } from './exercise-schema';
-import { ExerciseService } from '../../service/exercise/exercise-service';
-import { ExercisePerformedParams, ExercisePerformedPayload, ExerciseSet, SelectExercisePayload } from '../../domain/exercise/exercise';
-import { AuthenticatedFastifyRequest } from '../../server/middleware/authenticated-request';
-import { authenticate } from '../../server/middleware/authentication';
-import { ExerciseAlreadySelectedError, ExerciseDoesNotExistError, ExerciseNotAddedError } from '../../domain/exercise/exercise-error';
-import { BadRequestError } from '../error/bad-request-error';
 
 export class ExerciseController implements RouteTarget {
     constructor(private exerciseService: ExerciseService) {}
@@ -71,6 +71,7 @@ export class ExerciseController implements RouteTarget {
             if (error instanceof ExerciseNotAddedError) {
                 throw new BadRequestError('add the exercise to your selected exercises before you can train it');
             }
+            throw error;
         }
         reply.status(200).send();
     }

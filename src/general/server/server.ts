@@ -1,5 +1,5 @@
 import fastify, { FastifyInstance } from 'fastify';
-import { RouteTarget } from '../controller/route-target';
+import { RouteTarget } from './controller/route-target';
 import { fastifyErrorHandler } from './middleware/error-handler';
 
 export class MoveMoreServer {

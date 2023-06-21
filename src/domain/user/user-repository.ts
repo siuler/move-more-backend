@@ -1,6 +1,6 @@
-import { InsertUserPayload, IUser, UserId } from '../../domain/user/user';
+import { InsertUserPayload, IUser, UserId } from './user';
 import { Pool } from 'mysql2/promise';
-import { UserExistsError, UserNotFoundError } from '../../domain/user/user-error';
+import { UserExistsError, UserNotFoundError } from './user-error';
 
 const STMT_INSERT_USER = `INSERT INTO user(email, username, password_hash) VALUES(?,?,?)`;
 

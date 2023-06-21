@@ -1,5 +1,5 @@
 import { HealthController } from './health.controller';
-import { makeMockReply, makeMockRequest } from '../../../jest/controller-mocks';
+import { makeMockReply, makeMockRequest } from '../../../../../jest/controller-mocks';
 
 describe('health controller', () => {
     describe('Route Registration', () => {

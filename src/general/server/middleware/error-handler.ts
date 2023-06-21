@@ -1,4 +1,4 @@
-import { ControllerError } from '../../controller/error/controller-error';
+import { ControllerError } from '../controller/error/controller-error';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
 export function fastifyErrorHandler(error: Error, request: FastifyRequest, reply: FastifyReply) {

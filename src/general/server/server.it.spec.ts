@@ -1,4 +1,4 @@
-import { HealthController } from '../controller/health/health.controller';
+import { HealthController } from './controller/health/health.controller';
 import fetch from 'node-fetch';
 import { MoveMoreServer } from './server';
 import { FastifyReply, FastifyRequest } from 'fastify';

@@ -1,10 +1,10 @@
 import * as jwt from 'jsonwebtoken';
 import * as crypto from 'crypto';
-import { UserId } from '../../domain/user/user';
-import { AuthTokenPair } from '../../domain/token/auth-token-pair';
-import { TokenRepository } from '../../repository/user/token-repository';
+import { UserId } from '../user/user';
+import { AuthTokenPair } from './auth-token-pair';
+import { TokenRepository } from './token-repository';
 import { Secret } from 'jsonwebtoken';
-import { InvalidTokenError } from '../../domain/token/token-error';
+import { InvalidTokenError } from './token-error';
 
 export class TokenService {
     constructor(private secret: Secret, private tokenRepository: TokenRepository) {}
