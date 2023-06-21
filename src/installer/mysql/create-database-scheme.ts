@@ -1,6 +1,9 @@
 import * as applicationConfig from '../../config/config.json';
 import { Connection, createConnection } from 'mysql2/promise';
 
+const USER_ID_TYPE = 'MEDIUMINT UNSIGNED';
+const EXERCISE_ID_TYPE = 'TINYINT(255) UNSIGNED';
+
 export async function createDatabaseScheme() {
     const databaseName = applicationConfig.database.database;
     const connection = await createConnection({
@@ -23,13 +26,15 @@ export async function createDatabaseScheme() {
 
     await createExerciseTable(connection);
 
+    await createSelectedExerciseTable(connection);
+
     await createPerformedExerciseTable(connection);
 }
 
 async function createUserTable(connection: Connection) {
     await connection.execute(`
 		CREATE TABLE IF NOT EXISTS user(
-		    id MEDIUMINT UNSIGNED AUTO_INCREMENT,
+		    id ${USER_ID_TYPE} AUTO_INCREMENT,
 		    email VARCHAR(255) UNIQUE,
 		    username VARCHAR(16) UNIQUE,
 		    password_hash CHAR(60) NOT NULL,
@@ -44,7 +49,7 @@ async function createUserTable(connection: Connection) {
 async function createRefreshTokenTable(connection: Connection) {
     await connection.execute(`
 		CREATE TABLE IF NOT EXISTS refresh_token(
-		    user_id MEDIUMINT UNSIGNED,
+		    user_id ${USER_ID_TYPE},
 		    refresh_token TEXT,
 		    PRIMARY KEY (user_id),
 		    FOREIGN KEY (user_id)
@@ -57,10 +62,30 @@ async function createRefreshTokenTable(connection: Connection) {
 async function createExerciseTable(connection: Connection) {
     await connection.execute(`
 		CREATE TABLE IF NOT EXISTS exercise(
-		    id TINYINT(255) UNSIGNED,
+		    id ${EXERCISE_ID_TYPE} AUTO_INCREMENT,
 		    name VARCHAR(255) UNIQUE,
 			description MEDIUMTEXT,
 		    PRIMARY KEY (id)
+		)
+	`);
+    await connection.execute(`
+		INSERT INTO exercise(name, description) 
+		VALUES ('Push-Up', 'I really do not know how to descripe push ups.')
+	`);
+}
+
+async function createSelectedExerciseTable(connection: Connection) {
+    await connection.execute(`
+		CREATE TABLE IF NOT EXISTS selected_exercise(
+			user_id ${USER_ID_TYPE},
+			exercise_id ${EXERCISE_ID_TYPE},
+			PRIMARY KEY(user_id, exercise_id),
+			FOREIGN KEY (user_id)
+				REFERENCES user(id)
+				ON DELETE CASCADE,
+			FOREIGN KEY (exercise_id)
+				REFERENCES exercise(id)
+				ON DELETE RESTRICT
 		)
 	`);
 }
@@ -68,8 +93,8 @@ async function createExerciseTable(connection: Connection) {
 async function createPerformedExerciseTable(connection: Connection) {
     await connection.execute(`
 		CREATE TABLE IF NOT EXISTS performed_exercise(
-			user_id MEDIUMINT UNSIGNED,
-			exercise_id TINYINT(255) UNSIGNED,
+			user_id ${USER_ID_TYPE},
+			exercise_id ${EXERCISE_ID_TYPE},
 			repetitions SMALLINT UNSIGNED,
 			timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 			FOREIGN KEY (user_id)

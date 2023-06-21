@@ -7,8 +7,12 @@ export type ExerciseSet = {
     repetitions: number;
 };
 
+export type SelectExercisePayload = {
+    exerciseId: ExerciseId;
+};
+
 export type ExercisePerformedParams = {
-    exerciseId: number;
+    exerciseId: ExerciseId;
 };
 
 export type ExercisePerformedPayload = {
