@@ -24,6 +24,8 @@ export async function createDatabaseScheme() {
     await createUserTable(connection);
     await createRefreshTokenTable(connection);
 
+    await createFriendTable(connection);
+
     await createExerciseTable(connection);
 
     await createSelectedExerciseTable(connection);
@@ -42,6 +44,17 @@ async function createUserTable(connection: Connection) {
 		    verified_date TIMESTAMP NULL,
 		    provider TIMESTAMP NULL,
 		    PRIMARY KEY(id)
+		)
+	`);
+}
+
+async function createFriendTable(connection: Connection) {
+    await connection.execute(`
+		CREATE TABLE IF NOT EXISTS friend(
+			user_id ${USER_ID_TYPE},
+			friend_id ${USER_ID_TYPE},
+			timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY(user_id)
 		)
 	`);
 }
