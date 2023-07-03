@@ -3,29 +3,17 @@ import { BadRequestError } from '../../../general/server/controller/error/bad-re
 import { RouteTarget } from '../../../general/server/controller/route-target';
 import { AuthenticatedFastifyRequest } from '../../../general/server/middleware/authenticated-request';
 import { authenticate } from '../../../general/server/middleware/authentication';
-import { SelectExercisePayload, ExercisePerformedParams, ExercisePerformedPayload, ExerciseSet } from '../exercise';
-import { ExerciseAlreadySelectedError, ExerciseDoesNotExistError, ExerciseNotAddedError } from '../exercise-error';
+import { ExercisePerformedParams, ExercisePerformedPayload, ExerciseSet } from '../exercise';
 import { ExerciseService } from '../exercise-service';
-import { SELECT_EXERCISE_SCHEMA, TRAINING_ABSOLVED_SCHEMA } from './exercise-schema';
+import { TRAINING_ABSOLVED_SCHEMA } from './exercise-schema';
+import { ExerciseDoesNotExistError } from '../exercise-error';
+import { NotFoundError } from '../../../general/server/controller/error/not-found-error';
 
 export class ExerciseController implements RouteTarget {
     constructor(private exerciseService: ExerciseService) {}
 
     public getRoutes(): RouteOptions[] {
         return <RouteOptions[]>[
-            {
-                url: '/exercise',
-                method: 'POST',
-                preValidation: authenticate,
-                handler: this.selectExercise.bind(this),
-                schema: SELECT_EXERCISE_SCHEMA,
-            },
-            {
-                url: '/exercise',
-                method: 'GET',
-                preValidation: authenticate,
-                handler: this.getSelectedExercise.bind(this),
-            },
             {
                 url: '/exercise/train/:exerciseId',
                 method: 'POST',
@@ -34,26 +22,6 @@ export class ExerciseController implements RouteTarget {
                 schema: TRAINING_ABSOLVED_SCHEMA,
             },
         ];
-    }
-
-    public async selectExercise(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
-        const payload = request.body as SelectExercisePayload;
-        try {
-            await this.exerciseService.selectExercise(request.userId, payload.exerciseId);
-        } catch (error: unknown) {
-            if (error instanceof ExerciseAlreadySelectedError) {
-                reply.status(304).send();
-            } else if (error instanceof ExerciseDoesNotExistError) {
-                reply.status(400).send({ error: 'exercise does not exist' });
-            }
-            throw error;
-        }
-        reply.status(200).send();
-    }
-
-    public async getSelectedExercise(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
-        const exercises = await this.exerciseService.getSelectedExercises(request.userId);
-        reply.status(200).send(exercises);
     }
 
     public async exerciseAbsolved(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
@@ -68,8 +36,8 @@ export class ExerciseController implements RouteTarget {
         try {
             await this.exerciseService.handleExerciseAbsolved(exerciseSet);
         } catch (error: unknown) {
-            if (error instanceof ExerciseNotAddedError) {
-                throw new BadRequestError('add the exercise to your selected exercises before you can train it');
+            if (error instanceof ExerciseDoesNotExistError) {
+                throw new NotFoundError('the specified exercise id does not exist');
             }
             throw error;
         }

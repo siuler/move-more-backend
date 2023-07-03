@@ -1,5 +1,5 @@
 import { MysqlConnectionPool } from './mysql-connection-pool';
-import { createPool, Pool, PoolOptions } from 'mysql2/promise';
+import { createPool, Pool } from 'mysql2/promise';
 import { makeUniqueDummy } from '../../../jest/util';
 
 jest.mock('mysql2/promise');
@@ -10,13 +10,11 @@ describe('mySQL connection pool', () => {
         const dummyPool = makeUniqueDummy<Pool>();
         jest.mocked(createPool).mockReturnValue(dummyPool);
 
-        const dummyPoolOptions = makeUniqueDummy<PoolOptions>();
-
         //when
-        await MysqlConnectionPool.initialize(dummyPoolOptions);
+        await MysqlConnectionPool.initialize();
 
         //then
-        expect(createPool).toBeCalledWith(dummyPoolOptions);
+        expect(createPool).toBeCalled();
         expect(MysqlConnectionPool.getInstance()).toBe(dummyPool);
     });
 });

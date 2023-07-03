@@ -9,3 +9,7 @@ export interface IUpdateResponse extends ResultSetHeader {
     serverStatus: number;
     warningStatus: number;
 }
+
+export function isMySqlError(error: unknown): error is { code: string } {
+    return error instanceof Object && error.hasOwnProperty('code');
+}
