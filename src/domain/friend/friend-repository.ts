@@ -12,11 +12,29 @@ const QUERY_GET_FRIEND_LIST = `
     WHERE friend.user_id = ?
 `;
 
+const QUERY_FIND_FRIEND = `
+    SELECT 
+        user.id as user_id,
+        NOT ISNULL(friend.friend_id) as is_friend,
+        user.username as username 
+    FROM user 
+    LEFT JOIN friend
+        ON friend.user_id = ? AND friend.friend_id = user.id
+    WHERE username LIKE CONCAT('%', ?, '%')
+        AND user.id != ?  
+    ORDER BY LOCATE(?, username) ASC, 
+        username ASC`;
+
 export class FriendRepository {
     constructor(private connectionPool: Pool) {}
 
     public async getFriends(userId: UserId): Promise<Friend[]> {
         const [friendList] = await this.connectionPool.query<Friend[]>(QUERY_GET_FRIEND_LIST, [userId]);
         return friendList;
+    }
+
+    public async findFriends(forUser: UserId, query: string): Promise<Friend[]> {
+        const [foundUsers] = await this.connectionPool.query<Friend[]>(QUERY_FIND_FRIEND, [forUser, query, forUser, query]);
+        return foundUsers;
     }
 }

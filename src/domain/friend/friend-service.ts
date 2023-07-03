@@ -8,4 +8,8 @@ export class FriendService {
     public getFriendList(userId: UserId): Promise<Friend[]> {
         return this.friendRepository.getFriends(userId);
     }
+
+    public findFriends(forUser: UserId, query: string): Promise<Friend[]> {
+        return this.friendRepository.findFriends(forUser, query);
+    }
 }
