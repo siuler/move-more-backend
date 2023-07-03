@@ -1,5 +1,3 @@
-import { UserId } from '../../user/user';
-
 export const REFRESH_TOKEN_SCHEMA = {
     body: {
         type: 'object',
@@ -9,9 +7,4 @@ export const REFRESH_TOKEN_SCHEMA = {
         },
         required: ['refreshToken', 'userId'],
     },
-};
-
-export type RefreshTokenPayload = {
-    refreshToken: string;
-    userId: UserId;
 };

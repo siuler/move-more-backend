@@ -1,9 +1,10 @@
 import { RouteOptions, FastifyRequest, FastifyReply } from 'fastify';
 import { BadRequestError } from '../../../general/server/controller/error/bad-request-error';
 import { RouteTarget } from '../../../general/server/controller/route-target';
+import { RefreshTokenPayload } from '../../user/user';
 import { InvalidTokenError, TokenNotFoundError } from '../token-error';
 import { TokenService } from '../token-service';
-import { REFRESH_TOKEN_SCHEMA, RefreshTokenPayload } from './token-schema';
+import { REFRESH_TOKEN_SCHEMA } from './token-schema';
 
 export class TokenController implements RouteTarget {
     constructor(private tokenService: TokenService) {}

@@ -1,15 +1,12 @@
 import { InsertUserPayload, IUser, UserId } from './user';
 import { Pool } from 'mysql2/promise';
 import { UserExistsError, UserNotFoundError } from './user-error';
-import { Friend } from '../friend/friend';
 
 const STMT_INSERT_USER = `INSERT INTO user(email, username, password_hash) VALUES(?,?,?)`;
 
 const QUERY_FIND_USER_BY_ID = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE id = ?`;
 const QUERY_FIND_USER_BY_NAME = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE username = ?`;
 const QUERY_FIND_USER_BY_EMAIL = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE email = ?`;
-
-const QUERY_SEARCH_USER_BY_NAME_PART = `SELECT id as user_id,username FROM user WHERE username LIKE CONCAT('%', ?, '%') ORDER BY LOCATE(?, username) ASC, username ASC`;
 
 export class UserRepository {
     constructor(private connectionPool: Pool) {}
@@ -49,10 +46,5 @@ export class UserRepository {
             throw new UserNotFoundError('could not find user by email');
         }
         return foundUsers[0];
-    }
-
-    public async searchByNamePart(query: string): Promise<Friend[]> {
-        const [foundUsers] = await this.connectionPool.query<Friend[]>(QUERY_SEARCH_USER_BY_NAME_PART, [query, query]);
-        return foundUsers;
     }
 }

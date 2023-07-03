@@ -5,7 +5,6 @@ import { ValidationError } from '../../general/validation-error';
 import { WrongPasswordError } from './user-error';
 import { TokenService } from '../token/token-service';
 import { AuthTokenPair } from '../token/auth-token-pair';
-import { Friend } from '../friend/friend';
 
 const EMAIL_VALIDATION_PATTERN =
     /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
@@ -53,10 +52,6 @@ export class UserService {
         };
 
         return this.userRepository.create(userRow);
-    }
-
-    public async find(query: string): Promise<Friend[]> {
-        return this.userRepository.searchByNamePart(query);
     }
 
     public validateEmailFormat(email: string): boolean {

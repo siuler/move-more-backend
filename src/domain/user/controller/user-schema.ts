@@ -10,12 +10,6 @@ export const REGISTER_SCHEMA = {
     },
 };
 
-export type RegisterPayload = {
-    username: string;
-    email: string;
-    password: string;
-};
-
 export const LOGIN_SCHEMA = {
     body: {
         type: 'object',
@@ -25,23 +19,4 @@ export const LOGIN_SCHEMA = {
         },
         required: ['usernameOrEmail', 'password'],
     },
-};
-
-export type LoginPayload = {
-    usernameOrEmail: string;
-    password: string;
-};
-
-export const FIND_USER_SCHEMA = {
-    params: {
-        type: 'object',
-        properties: {
-            query: { type: 'string' },
-        },
-        required: ['query'],
-    },
-};
-
-export type FindUserParams = {
-    query: string;
 };
