@@ -1,5 +1,4 @@
 import { FastifyReply, RouteOptions } from 'fastify';
-import { BadRequestError } from '../../../general/server/controller/error/bad-request-error';
 import { RouteTarget } from '../../../general/server/controller/route-target';
 import { AuthenticatedFastifyRequest } from '../../../general/server/middleware/authenticated-request';
 import { authenticate } from '../../../general/server/middleware/authentication';
@@ -14,6 +13,7 @@ export class ExerciseController implements RouteTarget {
 
     public getRoutes(): RouteOptions[] {
         return <RouteOptions[]>[
+            { url: '/exercises', method: 'GET', preValidation: authenticate, handler: this.listExercises.bind(this) },
             {
                 url: '/exercise/train/:exerciseId',
                 method: 'POST',
@@ -22,6 +22,11 @@ export class ExerciseController implements RouteTarget {
                 schema: TRAINING_ABSOLVED_SCHEMA,
             },
         ];
+    }
+
+    public async listExercises(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
+        const exercises = await this.exerciseService.listExercises();
+        reply.status(200).send(exercises);
     }
 
     public async exerciseAbsolved(request: AuthenticatedFastifyRequest, reply: FastifyReply) {

@@ -75,13 +75,14 @@ async function createExerciseTable(connection: Connection) {
 		CREATE TABLE IF NOT EXISTS exercise(
 		    id ${EXERCISE_ID_TYPE} AUTO_INCREMENT,
 		    name VARCHAR(255) UNIQUE,
-			description MEDIUMTEXT,
+			pluralized_name VARCHAR(255),
+			image_url TINYTEXT,
 		    PRIMARY KEY (id)
 		)
 	`);
     await connection.execute(`
-		INSERT INTO exercise(name, description) 
-		VALUES ('Push-Up', 'I really do not know how to descripe push ups.')
+		INSERT INTO exercise(name, pluralized_name, image_url) 
+		VALUES ('Push-Up', 'Push-Ups', '')
 	`);
 }
 
