@@ -1,4 +1,5 @@
 import { RowDataPacket } from 'mysql2';
+import { JavaScriptObject } from '../../repository/mysql/types';
 
 export type RegisterPayload = {
     username: string;
@@ -17,7 +18,7 @@ export type RefreshTokenPayload = {
 };
 
 export type UserId = number;
-export interface IUser extends RowDataPacket {
+export interface DBUser extends RowDataPacket {
     id: UserId;
     email: string;
     username: string;
@@ -26,6 +27,7 @@ export interface IUser extends RowDataPacket {
     verified_date: string;
     provider: 'internal' | 'google' | 'apple';
 }
+export type User = JavaScriptObject<DBUser>;
 
 export type InsertUserPayload = {
     email: string;

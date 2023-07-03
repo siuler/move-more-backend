@@ -1,6 +1,7 @@
 import { Pool } from 'mysql2/promise';
 import { UserId } from '../user/user';
-import { Friend } from './friend';
+import { DBFriend, Friend } from './friend';
+import { asJavaScriptObject } from '../../repository/mysql/types';
 
 const QUERY_GET_FRIEND_LIST = `
     SELECT 
@@ -29,12 +30,12 @@ export class FriendRepository {
     constructor(private connectionPool: Pool) {}
 
     public async getFriends(userId: UserId): Promise<Friend[]> {
-        const [friendList] = await this.connectionPool.query<Friend[]>(QUERY_GET_FRIEND_LIST, [userId]);
-        return friendList;
+        const [friendList] = await this.connectionPool.query<DBFriend[]>(QUERY_GET_FRIEND_LIST, [userId]);
+        return friendList.map(asJavaScriptObject);
     }
 
     public async findFriends(forUser: UserId, query: string): Promise<Friend[]> {
-        const [foundUsers] = await this.connectionPool.query<Friend[]>(QUERY_FIND_FRIEND, [forUser, query, forUser, query]);
-        return foundUsers;
+        const [foundUsers] = await this.connectionPool.query<DBFriend[]>(QUERY_FIND_FRIEND, [forUser, query, forUser, query]);
+        return foundUsers.map(asJavaScriptObject);
     }
 }

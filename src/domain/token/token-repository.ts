@@ -1,6 +1,6 @@
 import { UserId } from '../user/user';
 import { Pool } from 'mysql2/promise';
-import { IRefreshToken } from './auth-token-pair';
+import { DBRefreshToken } from './auth-token-pair';
 import { TokenNotFoundError } from './token-error';
 
 const STMT_INSERT_REFRESH_TOKEN = `INSERT INTO refresh_token(user_id, refresh_token) VALUES(?,?) ON DUPLICATE KEY UPDATE refresh_token = VALUES(refresh_token)`;
@@ -15,7 +15,7 @@ export class TokenRepository {
     }
 
     public async findByUserId(userId: UserId): Promise<string> {
-        const [foundToken] = await this.connectionPool.query<IRefreshToken[]>(QUERY_FIND_REFRESH_TOKEN, [userId]);
+        const [foundToken] = await this.connectionPool.query<DBRefreshToken[]>(QUERY_FIND_REFRESH_TOKEN, [userId]);
         if (foundToken.length == 0) {
             throw new TokenNotFoundError('could not find token for this userid');
         }

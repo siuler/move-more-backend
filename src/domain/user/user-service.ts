@@ -1,6 +1,6 @@
 import { UserRepository } from './user-repository';
 import { compare, genSalt, hash } from 'bcrypt';
-import { InsertUserPayload, IUser, UserId } from './user';
+import { InsertUserPayload, User, UserId } from './user';
 import { ValidationError } from '../../general/validation-error';
 import { WrongPasswordError } from './user-error';
 import { TokenService } from '../token/token-service';
@@ -14,14 +14,14 @@ export class UserService {
     constructor(private userRepository: UserRepository, private tokenService: TokenService) {}
 
     public async login(emailOrUsername: string, password: string): Promise<AuthTokenPair> {
-        let user: IUser;
+        let user: User;
         if (emailOrUsername.includes('@')) {
             user = await this.userRepository.findByEmail(emailOrUsername);
         } else {
             user = await this.userRepository.findByName(emailOrUsername);
         }
 
-        const passwordsMatch = await compare(password, user.password_hash);
+        const passwordsMatch = await compare(password, user.passwordHash);
 
         if (passwordsMatch === true) {
             const tokenPair = this.tokenService.generateAndStoreTokenPair(user.id);
