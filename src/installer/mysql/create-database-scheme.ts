@@ -25,6 +25,7 @@ export async function createDatabaseScheme() {
     await createRefreshTokenTable(connection);
 
     await createFriendTable(connection);
+    await createFriendRequestTable(connection);
 
     await createExerciseTable(connection);
 
@@ -52,9 +53,35 @@ async function createFriendTable(connection: Connection) {
 			user_id ${USER_ID_TYPE},
 			friend_id ${USER_ID_TYPE},
 			timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			PRIMARY KEY(user_id)
+			PRIMARY KEY(user_id, friend_id),
+			FOREIGN KEY (user_id)
+				REFERENCES user(id)
+				ON DELETE CASCADE,
+			FOREIGN KEY (friend_id)
+				REFERENCES user(id)
+				ON DELETE CASCADE
 		)
 	`);
+
+    await connection.execute(`CREATE INDEX friend_user_id ON friend(user_id)`);
+}
+
+async function createFriendRequestTable(connection: Connection) {
+    await connection.execute(`
+		CREATE TABLE IF NOT EXISTS friend_request(
+			user_id ${USER_ID_TYPE},
+			friend_id ${USER_ID_TYPE},
+			timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY(user_id, friend_id),
+			FOREIGN KEY (user_id)
+				REFERENCES user(id)
+				ON DELETE CASCADE,
+			FOREIGN KEY (friend_id)
+				REFERENCES user(id)
+				ON DELETE CASCADE
+		)
+	`);
+    await connection.execute(`CREATE INDEX friend_request_user_id ON friend_request(user_id)`);
 }
 
 async function createRefreshTokenTable(connection: Connection) {

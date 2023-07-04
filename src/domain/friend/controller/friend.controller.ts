@@ -3,8 +3,11 @@ import { RouteTarget } from '../../../general/server/controller/route-target';
 import { authenticate } from '../../../general/server/middleware/authentication';
 import { FriendService } from '../friend-service';
 import { AuthenticatedFastifyRequest } from '../../../general/server/middleware/authenticated-request';
-import { SEARCH_FRIEND_SCHEMA, SearchFriendParams } from './friend-schema';
+import { SEARCH_FRIEND_SCHEMA, SEND_FRIEND_REQUEST_SCHEMA, SearchFriendParams, SendFriendRequestPayload } from './friend-schema';
 import { BadRequestError } from '../../../general/server/controller/error/bad-request-error';
+import { AlreadyFriendsError, CantAddSelfAsFriendError, FriendRequestAlreadySentError } from '../friend';
+import { ConflictError } from '../../../general/server/controller/error/conflict-error';
+import { UserNotFoundError } from '../../user/user-error';
 
 export class FriendController implements RouteTarget {
     constructor(private friendService: FriendService) {}
@@ -24,6 +27,13 @@ export class FriendController implements RouteTarget {
                 handler: this.searchUser.bind(this),
                 schema: SEARCH_FRIEND_SCHEMA,
             },
+            {
+                url: '/friend',
+                method: 'POST',
+                preValidation: authenticate,
+                handler: this.sendOrAcceptFriendRequest.bind(this),
+                schema: SEND_FRIEND_REQUEST_SCHEMA,
+            },
         ];
     }
 
@@ -41,5 +51,25 @@ export class FriendController implements RouteTarget {
 
         const potentialFriends = await this.friendService.findFriends(request.userId, params.query);
         reply.status(200).send(potentialFriends);
+    }
+
+    public async sendOrAcceptFriendRequest(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
+        const payload = request.body as SendFriendRequestPayload;
+
+        try {
+            const result = await this.friendService.sendOrAcceptFriendRequest(request.userId, payload.friendId);
+            reply.status(200).send(result);
+        } catch (error: unknown) {
+            if (error instanceof CantAddSelfAsFriendError) {
+                throw new BadRequestError('you can not send a friend request to yourself');
+            } else if (error instanceof UserNotFoundError) {
+                throw new BadRequestError('friend request receiver not found');
+            } else if (error instanceof AlreadyFriendsError) {
+                throw new ConflictError('you are already friends');
+            } else if (error instanceof FriendRequestAlreadySentError) {
+                throw new BadRequestError('you have already sent a friend request to this user');
+            }
+            throw error;
+        }
     }
 }
