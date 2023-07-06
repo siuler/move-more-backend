@@ -44,6 +44,6 @@ export const IS_USERNAME_AVAILABLE_SCHEMA: FastifySchema = {
     },
 };
 
-export type isUsernameAvailableParams = {
+export type IsUsernameAvailableParams = {
     username: string;
 };

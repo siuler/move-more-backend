@@ -5,7 +5,7 @@ import {
     LoginPayload,
     REGISTER_SCHEMA,
     RegisterPayload,
-    isUsernameAvailableParams,
+    IsUsernameAvailableParams,
 } from './user-schema';
 import { BadRequestError } from '../../../general/server/controller/error/bad-request-error';
 import { ConflictError } from '../../../general/server/controller/error/conflict-error';
@@ -31,7 +31,7 @@ export class UserController implements RouteTarget {
     }
 
     public async isUsernameAvailable(request: FastifyRequest, reply: FastifyReply) {
-        const params = request.params as isUsernameAvailableParams;
+        const params = request.params as IsUsernameAvailableParams;
         const isAvailable = await this.userService.isUsernameAvailable(params.username);
 
         reply.status(200).send({ isAvailable });
