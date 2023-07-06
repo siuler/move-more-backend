@@ -1,4 +1,4 @@
-import { DBUser, InsertUserPayload, User, UserId } from './user';
+import { DBIsUserAvailableResult, DBUser, InsertUserPayload, User, UserId } from './user';
 import { Pool } from 'mysql2/promise';
 import { UserExistsError, UserNotFoundError } from './user-error';
 import { asJavaScriptObject } from '../../repository/mysql/types';
@@ -9,8 +9,15 @@ const QUERY_FIND_USER_BY_ID = `SELECT id,email,username,password_hash,register_d
 const QUERY_FIND_USER_BY_NAME = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE username = ?`;
 const QUERY_FIND_USER_BY_EMAIL = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE email = ?`;
 
+const QUERY_IS_USERNAME_AVAILABLE = `SELECT COUNT(id) as row_count_with_this_username FROM user WHERE username = ?`;
+
 export class UserRepository {
     constructor(private connectionPool: Pool) {}
+
+    public async isUsernameAvailable(username: string): Promise<boolean> {
+        const [isTaken] = await this.connectionPool.query<[DBIsUserAvailableResult]>(QUERY_IS_USERNAME_AVAILABLE, [username]);
+        return isTaken[0].row_count_with_this_username === 0;
+    }
 
     public async create(user: InsertUserPayload): Promise<UserId> {
         try {

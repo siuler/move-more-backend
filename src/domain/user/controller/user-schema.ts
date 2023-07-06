@@ -1,4 +1,22 @@
-export const REGISTER_SCHEMA = {
+import { FastifySchema } from 'fastify';
+
+export const LOGIN_SCHEMA: FastifySchema = {
+    body: {
+        type: 'object',
+        properties: {
+            usernameOrEmail: { type: 'string' },
+            password: { type: 'string' },
+        },
+        required: ['usernameOrEmail', 'password'],
+    },
+};
+
+export type LoginPayload = {
+    usernameOrEmail: string;
+    password: string;
+};
+
+export const REGISTER_SCHEMA: FastifySchema = {
     body: {
         type: 'object',
         properties: {
@@ -10,13 +28,22 @@ export const REGISTER_SCHEMA = {
     },
 };
 
-export const LOGIN_SCHEMA = {
-    body: {
+export type RegisterPayload = {
+    username: string;
+    email: string;
+    password: string;
+};
+
+export const IS_USERNAME_AVAILABLE_SCHEMA: FastifySchema = {
+    params: {
         type: 'object',
         properties: {
-            usernameOrEmail: { type: 'string' },
-            password: { type: 'string' },
+            username: { type: 'string' },
         },
-        required: ['usernameOrEmail', 'password'],
+        required: ['username'],
     },
+};
+
+export type isUsernameAvailableParams = {
+    username: string;
 };

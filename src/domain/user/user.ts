@@ -1,22 +1,6 @@
 import { RowDataPacket } from 'mysql2';
 import { JavaScriptObject } from '../../repository/mysql/types';
 
-export type RegisterPayload = {
-    username: string;
-    email: string;
-    password: string;
-};
-
-export type LoginPayload = {
-    usernameOrEmail: string;
-    password: string;
-};
-
-export type RefreshTokenPayload = {
-    refreshToken: string;
-    userId: UserId;
-};
-
 export type UserId = number;
 export interface DBUser extends RowDataPacket {
     id: UserId;
@@ -34,3 +18,7 @@ export type InsertUserPayload = {
     username: string;
     password_hash: string;
 };
+
+export interface DBIsUserAvailableResult extends RowDataPacket {
+    row_count_with_this_username: number;
+}

@@ -13,6 +13,13 @@ const USERNAME_VALIDATION_PATTERN = /^[a-zA-Z0-9]{5,16}$/;
 export class UserService {
     constructor(private userRepository: UserRepository, private tokenService: TokenService) {}
 
+    public async isUsernameAvailable(username: string): Promise<boolean> {
+        if (!this.validateUsernameFormat(username)) {
+            return false;
+        }
+        return this.userRepository.isUsernameAvailable(username);
+    }
+
     public async login(emailOrUsername: string, password: string): Promise<AuthTokenPair> {
         let user: User;
         if (emailOrUsername.includes('@')) {
