@@ -3,9 +3,16 @@ import { RouteTarget } from '../../../general/server/controller/route-target';
 import { authenticate } from '../../../general/server/middleware/authentication';
 import { FriendService } from '../friend-service';
 import { AuthenticatedFastifyRequest } from '../../../general/server/middleware/authenticated-request';
-import { SEARCH_FRIEND_SCHEMA, SEND_FRIEND_REQUEST_SCHEMA, SearchFriendParams, SendFriendRequestPayload } from './friend-schema';
+import {
+    REMOVE_FRIEND_SCHEMA,
+    RemoveFriendParams,
+    SEARCH_FRIEND_SCHEMA,
+    SEND_FRIEND_REQUEST_SCHEMA,
+    SearchFriendParams,
+    SendFriendRequestPayload,
+} from './friend-schema';
 import { BadRequestError } from '../../../general/server/controller/error/bad-request-error';
-import { AlreadyFriendsError, CantAddSelfAsFriendError, FriendRequestAlreadySentError } from '../friend';
+import { AlreadyFriendsError, CantAddSelfAsFriendError, FriendRequestAlreadySentError, NotFriendsError } from '../friend';
 import { ConflictError } from '../../../general/server/controller/error/conflict-error';
 import { UserNotFoundError } from '../../user/user-error';
 
@@ -33,6 +40,13 @@ export class FriendController implements RouteTarget {
                 preValidation: authenticate,
                 handler: this.sendOrAcceptFriendRequest.bind(this),
                 schema: SEND_FRIEND_REQUEST_SCHEMA,
+            },
+            {
+                url: '/friend/:friendId',
+                method: 'DELETE',
+                preValidation: authenticate,
+                handler: this.removeFriend.bind(this),
+                schema: REMOVE_FRIEND_SCHEMA,
             },
         ];
     }
@@ -70,6 +84,18 @@ export class FriendController implements RouteTarget {
                 throw new BadRequestError('you have already sent a friend request to this user');
             }
             throw error;
+        }
+    }
+
+    public async removeFriend(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
+        const params = request.params as RemoveFriendParams;
+        try {
+            await this.friendService.removeFriend(request.userId, params.friendId);
+            reply.status(200).send();
+        } catch (error: unknown) {
+            if (error instanceof NotFriendsError) {
+                throw new BadRequestError('you were not friends');
+            }
         }
     }
 }

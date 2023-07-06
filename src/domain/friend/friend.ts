@@ -5,6 +5,7 @@ import { JavaScriptObject } from '../../repository/mysql/types';
 export class AlreadyFriendsError extends Error {}
 export class FriendRequestAlreadySentError extends Error {}
 export class CantAddSelfAsFriendError extends Error {}
+export class NotFriendsError extends Error {}
 
 export interface DBFriend extends RowDataPacket {
     user_id: UserId;

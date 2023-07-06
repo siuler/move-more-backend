@@ -26,3 +26,16 @@ export const SEND_FRIEND_REQUEST_SCHEMA: FastifySchema = {
 export type SendFriendRequestPayload = {
     friendId: number;
 };
+
+export const REMOVE_FRIEND_SCHEMA: FastifySchema = {
+    params: {
+        type: 'object',
+        properties: {
+            friendId: { type: 'number' },
+        },
+        required: ['friendId'],
+    },
+};
+export type RemoveFriendParams = {
+    friendId: number;
+};

@@ -29,11 +29,8 @@ const QUERY_FIND_FRIEND = `
 
 const QUERY_ARE_FRIENDS = `SELECT COUNT(*) > 0 AS are_friends FROM friend WHERE (user_id=? AND friend_id=?)`;
 
-const QUERY_HAS_SENT_FRIEND_REQUEST = `SELECT COUNT(*) > 0 AS has_sent_request FROM friend_request WHERE user_id=? AND friend_id=?`;
-
-const STMT_SEND_FRIEND_REQUEST = `INSERT INTO friend_request(user_id, friend_id) VALUES(?, ?)`;
-const STMT_DELETE_FRIEND_REQUEST = `DELETE FROM friend_request WHERE user_id=? and friend_id=?`;
 const STMT_INSERT_FRIENDS = `INSERT INTO friend(user_id,friend_id) VALUES(?,?),(?,?)`;
+const STMT_DELETE_FRIENDS = `DELETE FROM friend WHERE (user_id=? AND friend_id=?) OR (user_id=? AND friend_id=?)`;
 
 export class FriendRepository {
     constructor(private connectionPool: Pool) {}
@@ -53,29 +50,6 @@ export class FriendRepository {
         return areFriends[0].are_friends == 1;
     }
 
-    public async sendFriendRequest(sender: UserId, receiver: UserId) {
-        try {
-            await this.connectionPool.execute(STMT_SEND_FRIEND_REQUEST, [sender, receiver]);
-        } catch (error) {
-            if (isMySqlError(error) && error.code === 'ER_NO_REFERENCED_ROW_2') {
-                throw new UserNotFoundError();
-            }
-            throw error;
-        }
-    }
-
-    public async removeFriendRequest(from: UserId, to: UserId) {
-        await this.connectionPool.execute(STMT_DELETE_FRIEND_REQUEST, [from, to]);
-    }
-
-    public async hasSentFriendRequest(sender: UserId, receiver: UserId): Promise<boolean> {
-        const [hasSent] = await this.connectionPool.query<DBHasSentFriendRequestResult[]>(QUERY_HAS_SENT_FRIEND_REQUEST, [
-            sender,
-            receiver,
-        ]);
-        return hasSent[0].has_sent_request == 1;
-    }
-
     public async insertFriends(friend1: UserId, friend2: UserId) {
         try {
             await this.connectionPool.execute(STMT_INSERT_FRIENDS, [friend1, friend2, friend2, friend1]);
@@ -85,5 +59,9 @@ export class FriendRepository {
             }
             throw error;
         }
+    }
+
+    public async removeFriend(friend1: UserId, friend2: UserId) {
+        await this.connectionPool.execute(STMT_DELETE_FRIENDS, [friend1, friend2, friend2, friend1]);
     }
 }

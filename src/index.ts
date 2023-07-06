@@ -17,6 +17,7 @@ import { RankingRepository } from './domain/ranking/ranking-repository';
 import { RankingService } from './domain/ranking/ranking-service';
 import { RankingController } from './domain/ranking/controller/ranking.controller';
 import { FriendController } from './domain/friend/controller/friend.controller';
+import { FriendRequestRepository } from './domain/friend/friend-request-repository';
 
 install().then(async () => {
     await MysqlConnectionPool.initialize();
@@ -29,7 +30,8 @@ install().then(async () => {
     const userService = new UserService(userRepository, tokenService);
 
     const friendRepository = new FriendRepository(connectionPool);
-    const friendService = new FriendService(friendRepository);
+    const friendRequestRepository = new FriendRequestRepository(connectionPool);
+    const friendService = new FriendService(friendRepository, friendRequestRepository);
 
     const rankingRepository = new RankingRepository(connectionPool);
     const rankingService = new RankingService(rankingRepository, friendService);
