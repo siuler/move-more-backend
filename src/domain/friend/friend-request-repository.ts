@@ -1,9 +1,17 @@
 import { Pool } from 'mysql2/promise';
-import { isMySqlError } from '../../repository/mysql/types';
+import { asJavaScriptObject, isMySqlError } from '../../repository/mysql/types';
 import { UserId } from '../user/user';
 import { UserNotFoundError } from '../user/user-error';
-import { DBHasSentFriendRequestResult } from './friend';
+import { DBFriendRequest, DBHasSentFriendRequestResult, FriendRequest } from './friend';
 
+const QUERY_LIST_FRIEND_REQUESTS = `
+    SELECT 
+        friend_request.user_id as user_id, 
+        user.username as username
+    FROM friend_request
+        LEFT JOIN user
+            ON user.id = friend_request.user_id
+    WHERE friend_request.friend_id = ?`;
 const QUERY_HAS_SENT_FRIEND_REQUEST = `SELECT COUNT(*) > 0 AS has_sent_request FROM friend_request WHERE user_id=? AND friend_id=?`;
 
 const STMT_SEND_FRIEND_REQUEST = `INSERT INTO friend_request(user_id, friend_id) VALUES(?, ?)`;
@@ -11,6 +19,11 @@ const STMT_DELETE_FRIEND_REQUEST = `DELETE FROM friend_request WHERE user_id=? a
 
 export class FriendRequestRepository {
     constructor(private connectionPool: Pool) {}
+
+    public async listFriendRequest(userId: UserId): Promise<FriendRequest[]> {
+        const [friendRequests] = await this.connectionPool.query<DBFriendRequest[]>(QUERY_LIST_FRIEND_REQUESTS, [userId]);
+        return friendRequests.map(asJavaScriptObject);
+    }
 
     public async sendFriendRequest(sender: UserId, receiver: UserId) {
         try {

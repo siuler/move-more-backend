@@ -3,6 +3,7 @@ import {
     AlreadyFriendsError,
     CantAddSelfAsFriendError,
     Friend,
+    FriendRequest,
     FriendRequestAlreadySentError,
     NotFriendsError,
     SendOrAcceptFriendRequestResult,
@@ -43,6 +44,10 @@ export class FriendService {
                 hasSent: true,
             };
         }
+    }
+
+    public async listFriendRequests(userId: UserId): Promise<FriendRequest[]> {
+        return this.friendRequestRepository.listFriendRequest(userId);
     }
 
     public async removeFriend(friend1: UserId, friend2: UserId) {

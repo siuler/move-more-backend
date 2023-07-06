@@ -22,3 +22,9 @@ export interface DBHasSentFriendRequestResult extends RowDataPacket {
 }
 
 export type SendOrAcceptFriendRequestResult = { hasSent: boolean } | { hasAccepted: boolean };
+
+export interface DBFriendRequest extends RowDataPacket {
+    user_id: number;
+    username: string;
+}
+export type FriendRequest = JavaScriptObject<DBFriendRequest>;

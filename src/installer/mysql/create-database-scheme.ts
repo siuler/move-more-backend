@@ -82,6 +82,7 @@ async function createFriendRequestTable(connection: Connection) {
 		)
 	`);
     await connection.execute(`CREATE INDEX friend_request_user_id ON friend_request(user_id)`);
+    await connection.execute(`CREATE INDEX friend_request_friend_id ON friend_request(friend_id)`);
 }
 
 async function createRefreshTokenTable(connection: Connection) {

@@ -42,6 +42,12 @@ export class FriendController implements RouteTarget {
                 schema: SEND_FRIEND_REQUEST_SCHEMA,
             },
             {
+                url: '/friend/requests',
+                method: 'GET',
+                preValidation: authenticate,
+                handler: this.listFriendRequests.bind(this),
+            },
+            {
                 url: '/friend/:friendId',
                 method: 'DELETE',
                 preValidation: authenticate,
@@ -85,6 +91,11 @@ export class FriendController implements RouteTarget {
             }
             throw error;
         }
+    }
+
+    public async listFriendRequests(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
+        const friendRequests = await this.friendService.listFriendRequests(request.userId);
+        reply.status(200).send(friendRequests);
     }
 
     public async removeFriend(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
