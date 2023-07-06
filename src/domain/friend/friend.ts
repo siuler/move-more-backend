@@ -13,6 +13,9 @@ export interface DBFriend extends RowDataPacket {
 }
 export type Friend = JavaScriptObject<DBFriend>;
 
+export type DBPotentialFriend = DBFriend & DBAreFriendsResult;
+export type PotentialFriend = Friend & { areFriends: boolean };
+
 export interface DBAreFriendsResult extends RowDataPacket {
     are_friends: number;
 }

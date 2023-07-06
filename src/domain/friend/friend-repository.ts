@@ -1,6 +1,6 @@
 import { Pool } from 'mysql2/promise';
 import { User, UserId } from '../user/user';
-import { DBAreFriendsResult, DBFriend, DBHasSentFriendRequestResult, Friend } from './friend';
+import { DBAreFriendsResult, DBFriend, DBHasSentFriendRequestResult, DBPotentialFriend, Friend, PotentialFriend } from './friend';
 import { asJavaScriptObject, isMySqlError } from '../../repository/mysql/types';
 import { UserNotFoundError } from '../user/user-error';
 
@@ -17,7 +17,7 @@ const QUERY_GET_FRIEND_LIST = `
 const QUERY_FIND_FRIEND = `
     SELECT 
         user.id AS user_id,
-        NOT ISNULL(friend.friend_id) AS is_friend,
+        NOT ISNULL(friend.friend_id) AS are_friends,
         user.username AS username 
     FROM user 
     LEFT JOIN friend
@@ -40,9 +40,13 @@ export class FriendRepository {
         return friendList.map(asJavaScriptObject);
     }
 
-    public async findFriends(forUser: UserId, query: string): Promise<Friend[]> {
-        const [foundUsers] = await this.connectionPool.query<DBFriend[]>(QUERY_FIND_FRIEND, [forUser, query, forUser, query]);
-        return foundUsers.map(asJavaScriptObject);
+    public async findFriends(forUser: UserId, query: string): Promise<PotentialFriend[]> {
+        const [foundUsers] = await this.connectionPool.query<DBPotentialFriend[]>(QUERY_FIND_FRIEND, [forUser, query, forUser, query]);
+        return foundUsers.map(dbFoundUser => {
+            const foundUser: PotentialFriend = asJavaScriptObject(dbFoundUser);
+            foundUser.areFriends = !!foundUser.areFriends;
+            return foundUser;
+        });
     }
 
     public async areFriends(user1: UserId, user2: UserId): Promise<boolean> {

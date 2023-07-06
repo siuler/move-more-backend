@@ -6,6 +6,7 @@ import {
     FriendRequest,
     FriendRequestAlreadySentError,
     NotFriendsError,
+    PotentialFriend,
     SendOrAcceptFriendRequestResult,
 } from './friend';
 import { FriendRepository } from './friend-repository';
@@ -18,7 +19,7 @@ export class FriendService {
         return this.friendRepository.getFriends(userId);
     }
 
-    public findFriends(forUser: UserId, query: string): Promise<Friend[]> {
+    public findFriends(forUser: UserId, query: string): Promise<PotentialFriend[]> {
         return this.friendRepository.findFriends(forUser, query);
     }
 
