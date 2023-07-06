@@ -5,6 +5,7 @@ import {
     Friend,
     FriendRequest,
     FriendRequestAlreadySentError,
+    NoFriendRequestReceivedError,
     NotFriendsError,
     PotentialFriend,
     SendOrAcceptFriendRequestResult,
@@ -21,6 +22,10 @@ export class FriendService {
 
     public findFriends(forUser: UserId, query: string): Promise<PotentialFriend[]> {
         return this.friendRepository.findFriends(forUser, query);
+    }
+
+    public async listFriendRequests(userId: UserId): Promise<FriendRequest[]> {
+        return this.friendRequestRepository.listFriendRequest(userId);
     }
 
     public async sendOrAcceptFriendRequest(sender: UserId, receiver: UserId): Promise<SendOrAcceptFriendRequestResult> {
@@ -47,8 +52,11 @@ export class FriendService {
         }
     }
 
-    public async listFriendRequests(userId: UserId): Promise<FriendRequest[]> {
-        return this.friendRequestRepository.listFriendRequest(userId);
+    public async rejectFriendRequest(userId: UserId, rejectedUserId: UserId) {
+        if (!(await this.friendRequestRepository.hasSentFriendRequest(rejectedUserId, userId))) {
+            throw new NoFriendRequestReceivedError();
+        }
+        return this.friendRequestRepository.removeFriendRequest(rejectedUserId, userId);
     }
 
     public async removeFriend(friend1: UserId, friend2: UserId) {

@@ -27,6 +27,19 @@ export type SendFriendRequestPayload = {
     friendId: number;
 };
 
+export const REJECT_FRIEND_REQUEST_SCHEMA: FastifySchema = {
+    params: {
+        type: 'object',
+        properties: {
+            rejectedUserId: { type: 'number' },
+        },
+        required: ['rejectedUserId'],
+    },
+};
+export type RejectFriendRequestParams = {
+    rejectedUserId: number;
+};
+
 export const REMOVE_FRIEND_SCHEMA: FastifySchema = {
     params: {
         type: 'object',
