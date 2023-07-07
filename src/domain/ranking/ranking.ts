@@ -1,7 +1,6 @@
 import { RowDataPacket } from 'mysql2';
 import { UserId } from '../user/user';
-
-export class InvalidTimespanError extends Error {}
+import { InvalidTimespanError } from '../../general/error';
 
 export interface RankedUser extends RowDataPacket {
     id: UserId;

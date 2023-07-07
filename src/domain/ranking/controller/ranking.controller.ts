@@ -4,7 +4,8 @@ import { authenticate } from '../../../general/server/middleware/authentication'
 import { AuthenticatedFastifyRequest } from '../../../general/server/middleware/authenticated-request';
 import { RankingService } from '../ranking-service';
 import { RANKED_FRIEND_LIST_SCHEMA, RankedFriendListParams } from './ranking-schema';
-import { InvalidTimespanError, RankingTimespans } from '../ranking';
+import { RankingTimespans } from '../ranking';
+import { InvalidTimespanError } from '../../../general/error';
 
 export class RankingController implements RouteTarget {
     constructor(private rankingService: RankingService) {}

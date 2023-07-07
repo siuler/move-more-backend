@@ -1,7 +1,7 @@
 import { UserRepository } from './user-repository';
 import { compare, genSalt, hash } from 'bcrypt';
 import { InsertUserPayload, User, UserId } from './user';
-import { ValidationError } from '../../general/validation-error';
+import { ValidationError } from '../../general/error';
 import { WrongPasswordError } from './user-error';
 import { TokenService } from '../token/token-service';
 import { AuthTokenPair } from '../token/auth-token-pair';

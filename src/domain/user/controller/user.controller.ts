@@ -10,7 +10,7 @@ import {
 import { BadRequestError } from '../../../general/server/controller/error/bad-request-error';
 import { ConflictError } from '../../../general/server/controller/error/conflict-error';
 import { RouteTarget } from '../../../general/server/controller/route-target';
-import { ValidationError } from '../../../general/validation-error';
+import { ValidationError } from '../../../general/error';
 import { UserNotFoundError, WrongPasswordError, UserExistsError } from '../user-error';
 import { UserService } from '../user-service';
 
