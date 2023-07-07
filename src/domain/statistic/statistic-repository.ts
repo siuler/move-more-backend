@@ -2,6 +2,7 @@ import { Pool } from 'mysql2/promise';
 import { DBStatisticPacketItem, StatisticPacket, StatisticPacketMeta, StatisticTimespan } from './statistic';
 import { InvalidTimespanError } from '../../general/error';
 import { asJavaScriptObject } from '../../repository/mysql/types';
+import { UserId } from '../user/user';
 
 function buildStatsQuery(periodStartDateClause: string, groupByClause: string) {
     return `
@@ -31,11 +32,11 @@ const QUERY_GET_STATS_MONTHLY = buildStatsQuery(
 export class StatisticRepository {
     constructor(private connectionPool: Pool) {}
 
-    public async getStats(metadata: StatisticPacketMeta): Promise<StatisticPacket> {
+    public async getStats(userId: UserId, metadata: StatisticPacketMeta): Promise<StatisticPacket> {
         const query = this.getQueryForTimespan(metadata.timespan);
 
         const [statisticPacketItems] = await this.connectionPool.query<DBStatisticPacketItem[]>(query, [
-            metadata.userId,
+            userId,
             metadata.exerciseId,
             metadata.firstDateNotToInclude ?? null,
         ]);

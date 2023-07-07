@@ -8,9 +8,8 @@ export type DateString = `${number}-${number}-${number}`;
 
 export type StatisticPacketMeta = {
     timespan: StatisticTimespan;
-    userId: UserId;
     exerciseId: ExerciseId;
-    firstDateNotToInclude: DateString;
+    firstDateNotToInclude: DateString | null;
 };
 
 export interface DBStatisticPacketItem extends RowDataPacket {
@@ -20,3 +19,8 @@ export interface DBStatisticPacketItem extends RowDataPacket {
 
 export type StatisticPacketItem = JavaScriptObject<DBStatisticPacketItem>;
 export type StatisticPacket = StatisticPacketItem[];
+
+export type MultiUserStatisticPacket = {
+    userId: UserId;
+    statistics: StatisticPacket;
+}[];

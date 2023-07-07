@@ -132,4 +132,7 @@ async function createPerformedExerciseTable(connection: Connection) {
     await connection.execute(`
 		CREATE INDEX performed_exercise_user_exercise ON performed_exercise(user_id, exercise_id)
 	`);
+    await connection.execute(`
+		CREATE INDEX performed_exercise_timestamp ON performed_exercise(timestamp)
+	`);
 }

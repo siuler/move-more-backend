@@ -18,6 +18,9 @@ import { RankingService } from './domain/ranking/ranking-service';
 import { RankingController } from './domain/ranking/controller/ranking.controller';
 import { FriendController } from './domain/friend/controller/friend.controller';
 import { FriendRequestRepository } from './domain/friend/friend-request-repository';
+import { StatisticRepository } from './domain/statistic/statistic-repository';
+import { StatisticService } from './domain/statistic/statistic-service';
+import { StatisticController } from './domain/statistic/controller/statistic.controller';
 
 install().then(async () => {
     await MysqlConnectionPool.initialize();
@@ -36,16 +39,20 @@ install().then(async () => {
     const rankingRepository = new RankingRepository(connectionPool);
     const rankingService = new RankingService(rankingRepository, friendService);
 
-    const performedExerciseRepository = new ExerciseRepository(connectionPool);
-    const trainingService = new ExerciseService(performedExerciseRepository);
+    const statisticRepository = new StatisticRepository(connectionPool);
+    const statisticService = new StatisticService(statisticRepository);
+
+    const exerciseRepository = new ExerciseRepository(connectionPool);
+    const exerciseService = new ExerciseService(exerciseRepository);
 
     const controllers = [
         new HealthController(),
-        new UserController(userService),
         new TokenController(tokenService),
-        new ExerciseController(trainingService),
+        new UserController(userService),
         new FriendController(friendService),
         new RankingController(rankingService),
+        new StatisticController(statisticService, friendService),
+        new ExerciseController(exerciseService),
     ];
 
     const server = new MoveMoreServer(controllers);

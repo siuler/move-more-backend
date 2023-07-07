@@ -20,6 +20,10 @@ export class FriendService {
         return this.friendRepository.getFriends(userId);
     }
 
+    public areFriends(user1: UserId, user2: UserId): Promise<boolean> {
+        return this.friendRepository.areFriends(user1, user2);
+    }
+
     public findFriends(forUser: UserId, query: string): Promise<PotentialFriend[]> {
         return this.friendRepository.findFriends(forUser, query);
     }

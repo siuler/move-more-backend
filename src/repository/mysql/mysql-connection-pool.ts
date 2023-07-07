@@ -10,6 +10,7 @@ export class MysqlConnectionPool {
             user: applicationConfig.database.user,
             password: applicationConfig.database.password,
             database: applicationConfig.database.database,
+            timezone: 'UTC',
         });
     }
 
