@@ -7,13 +7,13 @@ export function fastifyErrorHandler(error: Error, request: FastifyRequest, reply
         if (statusCode >= 500) {
             console.error(error);
         }
-        return reply.status(statusCode).send(error);
+        return reply.status(statusCode).send({
+            error: error.message,
+        });
     }
     console.error(error);
     reply.status(500).send({
-        statusCode: 500,
-        error: 'InternalServerError',
-        message: 'something unexpected happened. Please try again later',
+        error: 'something unexpected happened. Please try again later',
     });
 }
 

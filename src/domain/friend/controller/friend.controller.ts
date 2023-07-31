@@ -75,7 +75,7 @@ export class FriendController implements RouteTarget {
 
     public async getFriendList(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
         const friendList = await this.friendService.getFriendList(request.userId);
-        reply.send(friendList);
+        reply.status(200).send(friendList);
     }
 
     public async searchUser(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
