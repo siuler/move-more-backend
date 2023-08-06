@@ -1,8 +1,9 @@
 import { Pool } from 'mysql2/promise';
 import { UserId } from '../user/user';
-import { RankedUser } from './ranking';
+import { DBRankedUser, RankedUser } from './ranking';
 import { ExerciseId } from '../exercise/exercise';
 import { Seconds } from '../../general/types';
+import { asJavaScriptObject } from '../../repository/mysql/types';
 
 const QUERY_GET_RANKED_FRIEND_LIST = `
     SELECT 
@@ -23,12 +24,12 @@ export class RankingRepository {
     constructor(private connectionPool: Pool) {}
 
     public async rankUserIds(userIds: UserId[], exerciseId: ExerciseId, timespanInSeconds: Seconds): Promise<RankedUser[]> {
-        const [rankedUserList] = await this.connectionPool.query<RankedUser[]>(QUERY_GET_RANKED_FRIEND_LIST, [
+        const [rankedUserList] = await this.connectionPool.query<DBRankedUser[]>(QUERY_GET_RANKED_FRIEND_LIST, [
             userIds,
             exerciseId,
             timespanInSeconds,
         ]);
 
-        return rankedUserList;
+        return rankedUserList.map(asJavaScriptObject);
     }
 }

@@ -1,12 +1,15 @@
 import { RowDataPacket } from 'mysql2';
 import { UserId } from '../user/user';
 import { InvalidTimespanError } from '../../general/error';
+import { JavaScriptObject } from '../../repository/mysql/types';
 
-export interface RankedUser extends RowDataPacket {
-    id: UserId;
+export interface DBRankedUser extends RowDataPacket {
+    user_id: UserId;
     username: string;
     score: number;
 }
+
+export type RankedUser = JavaScriptObject<DBRankedUser>;
 
 export type RankingTimespan = number;
 
