@@ -8,7 +8,7 @@ export class RankingService {
     constructor(private rankingRepository: RankingRepository, private friendService: FriendService) {}
 
     public async getRankedFriendList(userId: UserId, exerciseId: ExerciseId, timespan: RankingTimespan): Promise<RankedUser[]> {
-        const friendIds = (await this.friendService.getFriendList(userId)).map(friend => friend.user_id);
+        const friendIds = (await this.friendService.getFriendList(userId)).map(friend => friend.userId);
         const idsToRank = [...friendIds, userId];
 
         return this.rankingRepository.rankUserIds(idsToRank, exerciseId, timespan);

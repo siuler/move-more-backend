@@ -9,15 +9,16 @@ const QUERY_GET_RANKED_FRIEND_LIST = `
     SELECT 
         user.id as user_id,
         user.username as username,
-        SUM(performed_exercise.repetitions) AS score
-    FROM performed_exercise
-    LEFT JOIN user
-        ON user.id = performed_exercise.user_id
+        COALESCE(SUM(performed_exercise.repetitions),0) AS score
+    FROM user
+    LEFT JOIN performed_exercise
+        ON performed_exercise.user_id = user.id
+            AND performed_exercise.exercise_id = ?
+            AND performed_exercise.timestamp > NOW() - INTERVAL ? SECOND
     WHERE 
-        performed_exercise.user_id IN (?)
-        AND performed_exercise.exercise_id = ?
-        AND performed_exercise.timestamp > NOW() - INTERVAL ? SECOND
-    GROUP BY performed_exercise.user_id
+        user.id IN (?)
+    GROUP BY user.id
+    ORDER BY score DESC
 `;
 
 export class RankingRepository {
@@ -25,11 +26,11 @@ export class RankingRepository {
 
     public async rankUserIds(userIds: UserId[], exerciseId: ExerciseId, timespanInSeconds: Seconds): Promise<RankedUser[]> {
         const [rankedUserList] = await this.connectionPool.query<DBRankedUser[]>(QUERY_GET_RANKED_FRIEND_LIST, [
-            userIds,
             exerciseId,
             timespanInSeconds,
+            userIds,
         ]);
-
+        rankedUserList.forEach(rankedUser => (rankedUser.score = +rankedUser.score));
         return rankedUserList.map(asJavaScriptObject);
     }
 }
