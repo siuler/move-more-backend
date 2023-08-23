@@ -40,7 +40,9 @@ export class StatisticRepository {
             metadata.exerciseId,
             metadata.firstDateNotToInclude ?? null,
         ]);
-        return statisticPacketItems.map(asJavaScriptObject);
+        const items = statisticPacketItems.map(asJavaScriptObject);
+        items.forEach(item => (item.score = +item.score));
+        return items;
     }
 
     private getQueryForTimespan(timespan: StatisticTimespan) {
