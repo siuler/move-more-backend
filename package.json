@@ -7,7 +7,8 @@
     "start": "ts-node src/index.ts",
     "lint:fix": "eslint --max-warnings 0 \"./**/*.ts\" --fix",
     "test": "jest --config=jest.config.ts",
-    "setup": "nvm use && npm ci"
+    "setup": "nvm use && npm ci",
+    "populate-exercises": "ts-node src/cli/populate-exercises.ts"
   },
   "author": "",
   "license": "ISC",

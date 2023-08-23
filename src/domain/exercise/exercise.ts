@@ -11,6 +11,7 @@ export interface DBExercise extends RowDataPacket {
     image_url: string;
 }
 export type Exercise = JavaScriptObject<DBExercise>;
+export type NewExercise = Omit<Exercise, 'id'>;
 
 export type ExerciseSet = {
     userId: UserId;

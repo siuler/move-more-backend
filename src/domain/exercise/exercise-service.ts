@@ -1,5 +1,5 @@
 import { ExerciseRepository } from './repository/exercise-repository';
-import { Exercise, ExerciseSet } from './exercise';
+import { Exercise, ExerciseSet, NewExercise } from './exercise';
 
 export class ExerciseService {
     constructor(private exerciseRepository: ExerciseRepository) {}
@@ -10,5 +10,9 @@ export class ExerciseService {
 
     public async handleExerciseAbsolved(exerciseSet: ExerciseSet) {
         return this.exerciseRepository.persistAbsolvedExercise(exerciseSet);
+    }
+
+    public async createExercise(exercise: NewExercise) {
+        return this.exerciseRepository.createExercise(exercise);
     }
 }
