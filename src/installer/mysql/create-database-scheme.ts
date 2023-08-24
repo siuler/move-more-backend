@@ -23,6 +23,7 @@ export async function createDatabaseScheme() {
 
     await createUserTable(connection);
     await createRefreshTokenTable(connection);
+    await createOauthTable(connection);
 
     await createFriendTable(connection);
     await createFriendRequestTable(connection);
@@ -38,11 +39,38 @@ async function createUserTable(connection: Connection) {
 		    id ${USER_ID_TYPE} AUTO_INCREMENT,
 		    email VARCHAR(255) UNIQUE,
 		    username VARCHAR(16) UNIQUE,
-		    password_hash CHAR(60) NOT NULL,
+		    password_hash CHAR(60) NULL,
 		    register_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 		    verified_date TIMESTAMP NULL,
 		    provider TIMESTAMP NULL,
 		    PRIMARY KEY(id)
+		)
+	`);
+}
+
+async function createRefreshTokenTable(connection: Connection) {
+    await connection.execute(`
+		CREATE TABLE IF NOT EXISTS refresh_token(
+		    user_id ${USER_ID_TYPE},
+		    refresh_token TEXT,
+		    PRIMARY KEY (user_id),
+		    FOREIGN KEY (user_id)
+		        REFERENCES user(id)
+		        ON DELETE CASCADE
+		)
+	`);
+}
+
+async function createOauthTable(connection: Connection) {
+    await connection.execute(`
+		CREATE TABLE IF NOT EXISTS oauth(
+			subject VARCHAR(255),
+			user_id ${USER_ID_TYPE} UNIQUE,
+			provider VARCHAR(16),
+			PRIMARY KEY (subject),
+			FOREIGN KEY (user_id)
+				REFERENCES user(id)
+				ON DELETE CASCADE
 		)
 	`);
 }
@@ -83,19 +111,6 @@ async function createFriendRequestTable(connection: Connection) {
 	`);
     await connection.execute(`CREATE INDEX friend_request_user_id ON friend_request(user_id)`);
     await connection.execute(`CREATE INDEX friend_request_friend_id ON friend_request(friend_id)`);
-}
-
-async function createRefreshTokenTable(connection: Connection) {
-    await connection.execute(`
-		CREATE TABLE IF NOT EXISTS refresh_token(
-		    user_id ${USER_ID_TYPE},
-		    refresh_token TEXT,
-		    PRIMARY KEY (user_id),
-		    FOREIGN KEY (user_id)
-		        REFERENCES user(id)
-		        ON DELETE CASCADE
-		)
-	`);
 }
 
 async function createExerciseTable(connection: Connection) {

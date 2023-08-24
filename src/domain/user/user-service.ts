@@ -38,19 +38,22 @@ export class UserService {
         throw new WrongPasswordError('wrong password');
     }
 
-    public async register(email: string, username: string, password: string): Promise<UserId> {
+    public async register(email: string, username: string, password?: string): Promise<UserId> {
         if (!this.validateEmailFormat(email)) {
             throw new ValidationError('email is invalid');
         }
         if (!this.validateUsernameFormat(username)) {
             throw new ValidationError('username does not satisfy all specifications');
         }
-        if (!this.validatePasswordFormat(password)) {
-            throw new ValidationError('password does not satisfy all requirements');
-        }
+        let passwordHash: string | undefined = undefined;
 
-        const salt = await genSalt(9);
-        const passwordHash = await hash(password, salt);
+        if (password) {
+            if (!this.validatePasswordFormat(password)) {
+                throw new ValidationError('password does not satisfy all requirements');
+            }
+            const salt = await genSalt(9);
+            passwordHash = await hash(password, salt);
+        }
 
         const userRow: InsertUserPayload = {
             email,

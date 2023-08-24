@@ -21,6 +21,9 @@ import { FriendRequestRepository } from './domain/friend/friend-request-reposito
 import { StatisticRepository } from './domain/statistic/statistic-repository';
 import { StatisticService } from './domain/statistic/statistic-service';
 import { StatisticController } from './domain/statistic/controller/statistic.controller';
+import { GoogleOAuthRepository } from './domain/user/oauth/google-oauth-repository';
+import { OAuthService } from './domain/user/oauth/oauth-service';
+import { OAuthController } from './domain/user/oauth/oauth-controller';
 
 install().then(async () => {
     await MysqlConnectionPool.initialize();
@@ -31,6 +34,9 @@ install().then(async () => {
 
     const userRepository = new UserRepository(connectionPool);
     const userService = new UserService(userRepository, tokenService);
+
+    const googleOAuthRepository = new GoogleOAuthRepository(connectionPool);
+    const oAuthService = new OAuthService(googleOAuthRepository, tokenService, userService);
 
     const friendRepository = new FriendRepository(connectionPool);
     const friendRequestRepository = new FriendRequestRepository(connectionPool);
@@ -49,6 +55,7 @@ install().then(async () => {
         new HealthController(),
         new TokenController(tokenService),
         new UserController(userService),
+        new OAuthController(oAuthService),
         new FriendController(friendService),
         new RankingController(rankingService),
         new StatisticController(statisticService, friendService),

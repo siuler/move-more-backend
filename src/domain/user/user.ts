@@ -16,7 +16,7 @@ export type User = JavaScriptObject<DBUser>;
 export type InsertUserPayload = {
     email: string;
     username: string;
-    password_hash: string;
+    password_hash?: string;
 };
 
 export interface DBIsUserAvailableResult extends RowDataPacket {

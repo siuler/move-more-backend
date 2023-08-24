@@ -5,5 +5,10 @@
     "user": "root",
     "password": "root",
     "database": "move_more"
+  },
+  "oauth": {
+    "google": {
+      "clientId": "526530137999-t8vhhavg0dmp70ujb1g4ejjjmk6sboio.apps.googleusercontent.com"
+    }
   }
 }
