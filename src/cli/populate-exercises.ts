@@ -9,11 +9,6 @@ MysqlConnectionPool.initialize().then(() => {
 
     const exercises: NewExercise[] = [
         {
-            name: 'Push-Up',
-            pluralizedName: 'Push-Ups',
-            imageUrl: 'assets/slider_pushup.png',
-        },
-        {
             name: 'Sit-Up',
             pluralizedName: 'Sit-Ups',
             imageUrl: 'assets/slider_situp.png',
