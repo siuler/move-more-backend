@@ -53,7 +53,7 @@ install().then(async () => {
 
     const controllers = [
         new HealthController(),
-        new TokenController(tokenService),
+        new TokenController(tokenService, userService),
         new UserController(userService),
         new OAuthController(oAuthService),
         new FriendController(friendService),

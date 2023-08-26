@@ -1,5 +1,8 @@
 import { RowDataPacket } from 'mysql2';
-import { JavaScriptObject } from '../../repository/mysql/types';
+
+export type AuthResponse = AuthTokenPair & {
+    username: string;
+};
 
 export type AuthTokenPair = {
     accessToken: string;

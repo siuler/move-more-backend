@@ -4,7 +4,7 @@ import { InsertUserPayload, User, UserId } from './user';
 import { ValidationError } from '../../general/error';
 import { WrongPasswordError } from './user-error';
 import { TokenService } from '../token/token-service';
-import { AuthTokenPair } from '../token/auth-token-pair';
+import { AuthResponse } from '../token/auth-token-pair';
 
 const EMAIL_VALIDATION_PATTERN =
     /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
@@ -13,6 +13,11 @@ const USERNAME_VALIDATION_PATTERN = /^[a-zA-Z0-9]{5,16}$/;
 export class UserService {
     constructor(private userRepository: UserRepository, private tokenService: TokenService) {}
 
+    public async getUsername(userId: UserId): Promise<string> {
+        const user = await this.userRepository.findById(userId);
+        return user.username;
+    }
+
     public async isUsernameAvailable(username: string): Promise<boolean> {
         if (!this.validateUsernameFormat(username)) {
             return false;
@@ -20,7 +25,7 @@ export class UserService {
         return this.userRepository.isUsernameAvailable(username);
     }
 
-    public async login(emailOrUsername: string, password: string): Promise<AuthTokenPair> {
+    public async login(emailOrUsername: string, password: string): Promise<AuthResponse> {
         let user: User;
         if (emailOrUsername.includes('@')) {
             user = await this.userRepository.findByEmail(emailOrUsername);
@@ -31,8 +36,11 @@ export class UserService {
         const passwordsMatch = await compare(password, user.passwordHash);
 
         if (passwordsMatch === true) {
-            const tokenPair = this.tokenService.generateAndStoreTokenPair(user.id);
-            return tokenPair;
+            const tokenPair = await this.tokenService.generateAndStoreTokenPair(user.id);
+            return {
+                ...tokenPair,
+                username: user.username,
+            };
         }
 
         throw new WrongPasswordError('wrong password');

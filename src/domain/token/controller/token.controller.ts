@@ -4,9 +4,11 @@ import { RouteTarget } from '../../../general/server/controller/route-target';
 import { InvalidTokenError, TokenNotFoundError } from '../token-error';
 import { TokenService } from '../token-service';
 import { REFRESH_TOKEN_SCHEMA, RefreshTokenPayload } from './token-schema';
+import { AuthResponse } from '../auth-token-pair';
+import { UserService } from '../../user/user-service';
 
 export class TokenController implements RouteTarget {
-    constructor(private tokenService: TokenService) {}
+    constructor(private tokenService: TokenService, private userService: UserService) {}
 
     public getRoutes(): RouteOptions[] {
         return <RouteOptions[]>[
@@ -19,7 +21,12 @@ export class TokenController implements RouteTarget {
 
         try {
             const tokenPair = await this.tokenService.refreshToken(payload.userId, payload.refreshToken);
-            reply.status(200).send(tokenPair);
+            const username = await this.userService.getUsername(payload.userId);
+            const authResponse: AuthResponse = {
+                ...tokenPair,
+                username,
+            };
+            reply.status(200).send(authResponse);
         } catch (error: unknown) {
             if (error instanceof InvalidTokenError || error instanceof TokenNotFoundError) {
                 throw new BadRequestError('refresh token is invalid');
