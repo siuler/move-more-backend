@@ -39,7 +39,12 @@ export class StatisticController implements RouteTarget {
             firstDateNotToInclude = queryParams.firstKnown;
         }
 
-        const statistics = await this.statisticService.getStatisticsForUsers([request.userId, queryParams.comparedUser], {
+        const requestedUserIds = [queryParams.comparedUser];
+        if (queryParams.comparedUser !== request.userId) {
+            requestedUserIds.push(request.userId);
+        }
+
+        const statistics = await this.statisticService.getStatisticsForUsers(requestedUserIds, {
             exerciseId: params.exerciseId,
             timespan: queryParams.timespan,
             firstDateNotToInclude,
@@ -49,15 +54,12 @@ export class StatisticController implements RouteTarget {
     }
 
     private async validateParams(request: AuthenticatedFastifyRequest, queryParams: StatisticPacketQueryParams) {
-        if (request.userId === queryParams.comparedUser) {
-            throw new BadRequestError('can not compare statistics with yourself');
-        }
-
         if (!['day', 'week', 'month'].includes(queryParams.timespan)) {
             throw new BadRequestError('timespan must be day, week or month');
         }
 
-        if (!(await this.friendService.areFriends(request.userId, queryParams.comparedUser))) {
+        const isSelf = request.userId === queryParams.comparedUser;
+        if (!isSelf && !(await this.friendService.areFriends(request.userId, queryParams.comparedUser))) {
             throw new ForbiddenError('you can only view statistics of your friends');
         }
     }
