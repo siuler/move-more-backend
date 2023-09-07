@@ -5,8 +5,8 @@ import { InvalidTokenError } from '../../token/token-error';
 import { TokenService } from '../../token/token-service';
 import { UserService } from '../user-service';
 import { MissingScopeError } from './oauth-error';
-import { UserId } from '../user';
-import { AuthTokenPair } from '../../token/auth-token-pair';
+import { AuthResponse, AuthTokenPair } from '../../token/auth-token-pair';
+import { UserNotFoundError } from '../user-error';
 
 export class OAuthService {
     private googleOAuthClient: OAuth2Client;
@@ -19,13 +19,23 @@ export class OAuthService {
         this.googleOAuthClient = new OAuth2Client(applicationConfig.oauth.google.clientId);
     }
 
-    public async loginWithGoogle(idToken: string): Promise<AuthTokenPair> {
+    public async loginWithGoogle(idToken: string, email: string): Promise<AuthResponse> {
+        const userIsRegistered = await this.userService.isEmailInUse(email);
+        if (!userIsRegistered) {
+            throw new UserNotFoundError();
+        }
+
         const userInformation = await this.decodeToken(idToken);
         const userId = await this.googleOAuthRepository.findUserIdForSubject(userInformation.sub);
-        return this.tokenService.generateAndStoreTokenPair(userId);
+        const username = await this.userService.getUsername(userId);
+        const tokenPair = await this.tokenService.generateAndStoreTokenPair(userId);
+        return {
+            ...tokenPair,
+            username,
+        };
     }
 
-    public async registerWithGoogle(idToken: string, username: string): Promise<UserId> {
+    public async registerWithGoogle(idToken: string, username: string): Promise<AuthResponse> {
         const userInformation = await this.decodeToken(idToken);
 
         if (!userInformation.email) {
@@ -34,7 +44,11 @@ export class OAuthService {
 
         const userId = await this.userService.register(userInformation.email, username);
         await this.googleOAuthRepository.createUserWithGoogle(userInformation.sub, userId);
-        return userId;
+        const tokenPair = await this.tokenService.generateAndStoreTokenPair(userId);
+        return {
+            ...tokenPair,
+            username,
+        };
     }
 
     private async decodeToken(idToken: string): Promise<TokenPayload> {

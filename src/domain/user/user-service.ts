@@ -2,7 +2,7 @@ import { UserRepository } from './user-repository';
 import { compare, genSalt, hash } from 'bcrypt';
 import { InsertUserPayload, User, UserId } from './user';
 import { ValidationError } from '../../general/error';
-import { WrongPasswordError } from './user-error';
+import { UserNotFoundError, WrongPasswordError } from './user-error';
 import { TokenService } from '../token/token-service';
 import { AuthResponse } from '../token/auth-token-pair';
 
@@ -16,6 +16,18 @@ export class UserService {
     public async getUsername(userId: UserId): Promise<string> {
         const user = await this.userRepository.findById(userId);
         return user.username;
+    }
+
+    public async isEmailInUse(email: string): Promise<boolean> {
+        try {
+            const user = await this.userRepository.findByEmail(email);
+            return !!user;
+        } catch (e) {
+            if (e instanceof UserNotFoundError) {
+                return false;
+            }
+            throw e;
+        }
     }
 
     public async isUsernameAvailable(username: string): Promise<boolean> {
@@ -53,7 +65,7 @@ export class UserService {
         if (!this.validateUsernameFormat(username)) {
             throw new ValidationError('username does not satisfy all specifications');
         }
-        let passwordHash: string | undefined = undefined;
+        let passwordHash: string | null = null;
 
         if (password) {
             if (!this.validatePasswordFormat(password)) {

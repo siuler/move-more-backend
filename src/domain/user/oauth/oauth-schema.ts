@@ -5,13 +5,15 @@ export const LOGIN_WITH_GOOGLE_SCHEMA: FastifySchema = {
         type: 'object',
         properties: {
             token: { type: 'string' },
+            email: { type: 'string' },
         },
-        required: ['token'],
+        required: ['token', 'email'],
     },
 };
 
 export type LoginWithGooglePayload = {
     token: string;
+    email: string;
 };
 
 export const REGISTER_WITH_GOOGLE_SCHEMA: FastifySchema = {
@@ -25,4 +27,7 @@ export const REGISTER_WITH_GOOGLE_SCHEMA: FastifySchema = {
     },
 };
 
-export type RegisterWithGooglePayload = LoginWithGooglePayload & { username: string };
+export type RegisterWithGooglePayload = {
+    token: string;
+    username: string;
+};

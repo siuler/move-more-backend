@@ -26,7 +26,7 @@ export class OAuthController implements RouteTarget {
     public async loginWithGoogle(request: FastifyRequest, reply: FastifyReply) {
         const payload = request.body as LoginWithGooglePayload;
         try {
-            const tokenPair = this.oauthService.loginWithGoogle(payload.token);
+            const tokenPair = await this.oauthService.loginWithGoogle(payload.token, payload.email);
             reply.status(200).send(tokenPair);
         } catch (error) {
             if (error instanceof InvalidTokenError) {
@@ -41,8 +41,8 @@ export class OAuthController implements RouteTarget {
     public async registerWithGoogle(request: FastifyRequest, reply: FastifyReply) {
         const payload = request.body as RegisterWithGooglePayload;
         try {
-            const userId = this.oauthService.registerWithGoogle(payload.token, payload.username);
-            reply.status(200).send(userId);
+            const tokenPair = await this.oauthService.registerWithGoogle(payload.token, payload.username);
+            reply.status(200).send(tokenPair);
         } catch (error) {
             if (error instanceof InvalidTokenError) {
                 throw new BadRequestError('the provided google oauth token is invalid');
