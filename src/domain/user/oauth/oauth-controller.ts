@@ -26,7 +26,7 @@ export class OAuthController implements RouteTarget {
     public async loginWithGoogle(request: FastifyRequest, reply: FastifyReply) {
         const payload = request.body as LoginWithGooglePayload;
         try {
-            const tokenPair = await this.oauthService.loginWithGoogle(payload.token, payload.email);
+            const tokenPair = await this.oauthService.loginWithGoogle(payload.token, payload.id);
             reply.status(200).send(tokenPair);
         } catch (error) {
             if (error instanceof InvalidTokenError) {
