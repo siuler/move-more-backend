@@ -21,7 +21,7 @@ export function authenticate(request: FastifyRequest, reply: FastifyReply, done:
     } catch (error: unknown) {
         if (error instanceof TokenExpiredError) {
             throw new AuthenticationError('token expired');
-        } else if (error instanceof JsonWebTokenError) {
+        } else if (error instanceof JsonWebTokenError || error instanceof SyntaxError) {
             throw new AuthenticationError('invalid token');
         }
         throw error;
