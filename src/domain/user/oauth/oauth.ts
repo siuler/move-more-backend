@@ -4,5 +4,11 @@ export interface UserIdContainer extends RowDataPacket {
     user_id: number;
 }
 
-export const OAUTH_PROVIDER_GOOGLE = 'google';
-export const OAUTH_PROVIDER_APPLE = 'apple';
+export type OAuthTokenPayload = {
+    iss: string;
+    exp: number;
+    iat: number;
+    sub: string;
+    email?: string;
+    email_verified?: boolean;
+};
