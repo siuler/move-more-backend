@@ -1,0 +1,14 @@
+{
+  "database": {
+    "host": "movemore.c1lxbkskyhvk.eu-central-1.rds.amazonaws.com",
+    "port": 3306,
+    "user": "root",
+    "password": "LfcHVocSkzG7L$Cm",
+    "database": "move_more"
+  },
+  "oauth": {
+    "google": {
+      "clientId": "780037090676-bjn253sl8qjl24iehu7t1m24rfok238b.apps.googleusercontent.com"
+    }
+  }
+}
