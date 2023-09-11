@@ -1,13 +1,22 @@
 import fastify, { FastifyInstance } from 'fastify';
 import { RouteTarget } from './controller/route-target';
 import { fastifyErrorHandler } from './middleware/error-handler';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export class MoveMoreServer {
     private fastifyInstance: FastifyInstance;
 
     constructor(private routeTargets: RouteTarget[]) {
+        const key = fs.readFileSync(path.join(__dirname, 'ssl', 'fastify.key'));
+        const cert = fs.readFileSync(path.join(__dirname, 'ssl', 'fastify.cert'));
+
         this.fastifyInstance = fastify({
             keepAliveTimeout: 1000,
+            https: {
+                key,
+                cert,
+            },
         });
         this.fastifyInstance.setErrorHandler(fastifyErrorHandler);
         this.registerRoutes();
