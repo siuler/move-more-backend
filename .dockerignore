@@ -1,4 +1,6 @@
 .git
+.github
+.aws
 .vscode/
 jest/
 node_modules/
