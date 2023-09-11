@@ -36,6 +36,7 @@
     "fastify": "^4.14.1",
     "google-auth-library": "^9.0.0",
     "jsonwebtoken": "^9.0.0",
-    "mysql2": "^3.2.0"
+    "mysql2": "^3.2.0",
+    "verify-apple-id-token": "^3.0.1"
   }
 }
