@@ -24,13 +24,14 @@ import { StatisticController } from './domain/statistic/controller/statistic.con
 import { OAuthRepository } from './domain/user/oauth/oauth-repository';
 import { OAuthService } from './domain/user/oauth/oauth-service';
 import { OAuthController } from './domain/user/oauth/oauth-controller';
+import { JWT_PRIVATE_KEY } from './general/server/ssl/jwt-key';
 
 install().then(async () => {
     await MysqlConnectionPool.initialize();
     const connectionPool = MysqlConnectionPool.getInstance();
 
     const tokenRepository = new TokenRepository(connectionPool);
-    const tokenService = new TokenService('TODO: USE SSL CERT', tokenRepository);
+    const tokenService = new TokenService(JWT_PRIVATE_KEY, tokenRepository);
 
     const userRepository = new UserRepository(connectionPool);
     const userService = new UserService(userRepository, tokenService);
