@@ -30,6 +30,14 @@ export class UserService {
         }
     }
 
+    public async findByEmailOrUsername(emailOrUsername: string): Promise<User> {
+        if (emailOrUsername.includes('@')) {
+            return await this.userRepository.findByEmail(emailOrUsername);
+        } else {
+            return await this.userRepository.findByName(emailOrUsername);
+        }
+    }
+
     public async isUsernameAvailable(username: string): Promise<boolean> {
         if (!this.validateUsernameFormat(username)) {
             return false;
@@ -38,12 +46,7 @@ export class UserService {
     }
 
     public async login(emailOrUsername: string, password: string): Promise<AuthResponse> {
-        let user: User;
-        if (emailOrUsername.includes('@')) {
-            user = await this.userRepository.findByEmail(emailOrUsername);
-        } else {
-            user = await this.userRepository.findByName(emailOrUsername);
-        }
+        const user = await this.findByEmailOrUsername(emailOrUsername);
 
         const passwordsMatch = await compare(password, user.passwordHash);
 
@@ -65,14 +68,13 @@ export class UserService {
         if (!this.validateUsernameFormat(username)) {
             throw new ValidationError('username does not satisfy all specifications');
         }
-        let passwordHash: string | null = null;
 
+        let passwordHash: string | null = null;
         if (password) {
             if (!this.validatePasswordFormat(password)) {
                 throw new ValidationError('password does not satisfy all requirements');
             }
-            const salt = await genSalt(9);
-            passwordHash = await hash(password, salt);
+            passwordHash = await this.hashPassword(password);
         }
 
         const userRow: InsertUserPayload = {
@@ -84,15 +86,28 @@ export class UserService {
         return this.userRepository.create(userRow);
     }
 
-    public validateEmailFormat(email: string): boolean {
+    public async updatePassword(userId: UserId, password: string): Promise<boolean> {
+        if (!this.validatePasswordFormat(password)) {
+            throw new ValidationError('password does not satisfy all requirements');
+        }
+        const passwordHash = await this.hashPassword(password);
+        return this.userRepository.updatePassword(userId, passwordHash);
+    }
+
+    private validateEmailFormat(email: string): boolean {
         return EMAIL_VALIDATION_PATTERN.test(email);
     }
 
-    public validateUsernameFormat(username: string): boolean {
+    private validateUsernameFormat(username: string): boolean {
         return USERNAME_VALIDATION_PATTERN.test(username);
     }
 
-    public validatePasswordFormat(password: string): boolean {
+    private validatePasswordFormat(password: string): boolean {
         return password.length >= 8;
+    }
+
+    private async hashPassword(password: string): Promise<string> {
+        const salt = await genSalt(9);
+        return await hash(password, salt);
     }
 }
