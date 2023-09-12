@@ -3,6 +3,7 @@ import { AuthenticationError } from './authentication-error';
 import * as jwt from 'jsonwebtoken';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { AuthenticatedFastifyRequest } from './authenticated-request';
+import { parseJwt } from '../../util';
 
 export function authenticate(request: FastifyRequest, reply: FastifyReply, done: () => void) {
     const authHeader = request.headers.authorization;
@@ -34,8 +35,4 @@ function extendFastifyRequest(jwtToken: string, request: FastifyRequest) {
         throw new AuthenticationError('token payload does not contain uid');
     }
     (request as AuthenticatedFastifyRequest).userId = payload.uid;
-}
-
-function parseJwt(token: string) {
-    return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
 }
