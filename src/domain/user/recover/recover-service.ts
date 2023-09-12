@@ -30,7 +30,7 @@ export class RecoverAccountService {
 
     public async resetPassword(emailOrUsername: string, recoveryCode: RecoveryCode, newPassword: string) {
         const user = await this.userService.findByEmailOrUsername(emailOrUsername);
-        if (!this.isRecoveryCodeValid(user.id, recoveryCode)) {
+        if (!(await this.isRecoveryCodeValid(user.id, recoveryCode))) {
             throw new InvalidRecoveryCodeError();
         }
         await this.recoveryCodeRepository.deleteRecoveryCode(user.id);

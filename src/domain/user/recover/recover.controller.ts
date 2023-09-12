@@ -14,6 +14,7 @@ import { BadRequestError } from '../../../general/server/controller/error/bad-re
 import { isRecoveryCode } from './recovery';
 import { InvalidRecoveryCodeError } from './recovery-error';
 import { ValidationError } from '../../../general/error';
+import { NotFoundError } from '../../../general/server/controller/error/not-found-error';
 
 export class RecoverAccountController implements RouteTarget {
     constructor(private recoveryService: RecoverAccountService) {}
@@ -48,7 +49,7 @@ export class RecoverAccountController implements RouteTarget {
             reply.status(200).send();
         } catch (error) {
             if (error instanceof UserNotFoundError) {
-                throw new BadRequestError('there is no user registered with this email or username.');
+                throw new NotFoundError('there is no user registered with this email or username.');
             }
             throw error;
         }
@@ -66,7 +67,7 @@ export class RecoverAccountController implements RouteTarget {
             reply.status(200).send({ valid: true });
         } catch (error) {
             if (error instanceof UserNotFoundError) {
-                throw new BadRequestError('there is no user registered with this email or username.');
+                throw new NotFoundError('there is no user registered with this email or username.');
             }
             throw error;
         }
@@ -78,11 +79,11 @@ export class RecoverAccountController implements RouteTarget {
             if (!isRecoveryCode(payload.recoveryCode)) {
                 throw new InvalidRecoveryCodeError();
             }
-            this.recoveryService.resetPassword(payload.emailOrUsername, payload.recoveryCode, payload.newPassword);
+            await this.recoveryService.resetPassword(payload.emailOrUsername, payload.recoveryCode, payload.newPassword);
             reply.status(200).send();
         } catch (error) {
             if (error instanceof UserNotFoundError) {
-                throw new BadRequestError('there is no user with this email or username');
+                throw new NotFoundError('there is no user with this email or username');
             } else if (error instanceof InvalidRecoveryCodeError) {
                 throw new BadRequestError('the provided recovery code is invalid');
             } else if (error instanceof ValidationError) {
