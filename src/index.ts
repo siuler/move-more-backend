@@ -24,10 +24,15 @@ import { StatisticController } from './domain/statistic/controller/statistic.con
 import { OAuthRepository } from './domain/user/oauth/oauth-repository';
 import { OAuthService } from './domain/user/oauth/oauth-service';
 import { OAuthController } from './domain/user/oauth/oauth-controller';
+import { RecoverAccountController } from './domain/user/recover/recover.controller';
+import { RecoverAccountService } from './domain/user/recover/recover-service';
+import { MailClient } from './general/mail/mail-client';
+import { RecoveryCodeRepository } from './domain/user/recover/recovery-code-repository';
 
 install().then(async () => {
     await MysqlConnectionPool.initialize();
     const connectionPool = MysqlConnectionPool.getInstance();
+    const mailClient = new MailClient();
 
     const tokenRepository = new TokenRepository(connectionPool);
     const tokenService = new TokenService('TODO: USE SSL CERT', tokenRepository);
@@ -37,6 +42,9 @@ install().then(async () => {
 
     const googleOAuthRepository = new OAuthRepository(connectionPool);
     const oAuthService = new OAuthService(googleOAuthRepository, tokenService, userService);
+
+    const recoveryCodeRepository = new RecoveryCodeRepository(connectionPool);
+    const recoverAccountService = new RecoverAccountService(mailClient, userService, recoveryCodeRepository);
 
     const friendRepository = new FriendRepository(connectionPool);
     const friendRequestRepository = new FriendRequestRepository(connectionPool);
@@ -56,6 +64,7 @@ install().then(async () => {
         new TokenController(tokenService, userService),
         new UserController(userService),
         new OAuthController(oAuthService),
+        new RecoverAccountController(recoverAccountService),
         new FriendController(friendService),
         new RankingController(rankingService),
         new StatisticController(statisticService, friendService),

@@ -6,6 +6,10 @@
     "password": "LfcHVocSkzG7L$Cm",
     "database": "move_more"
   },
+  "mail": {
+    "region": "eu-central-1",
+    "noreplyAddress": "MoveMore<noreply@movemo.re>"
+  },
   "oauth": {
     "google": {
       "clientId": "780037090676-bjn253sl8qjl24iehu7t1m24rfok238b.apps.googleusercontent.com"

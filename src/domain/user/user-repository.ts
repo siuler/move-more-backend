@@ -1,15 +1,16 @@
 import { DBIsUserAvailableResult, DBUser, InsertUserPayload, User, UserId } from './user';
 import { Pool } from 'mysql2/promise';
 import { UserExistsError, UserNotFoundError } from './user-error';
-import { asJavaScriptObject } from '../../repository/mysql/types';
+import { IUpdateResponse, asJavaScriptObject } from '../../repository/mysql/types';
 
 const STMT_INSERT_USER = `INSERT INTO user(email, username, password_hash) VALUES(?,?,?)`;
+const STMT_UPDATE_PASSWORD = `UPDATE user SET password_hash = ? WHERE id = ?`;
+
+const QUERY_IS_USERNAME_AVAILABLE = `SELECT COUNT(id) as row_count_with_this_username FROM user WHERE username = ?`;
 
 const QUERY_FIND_USER_BY_ID = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE id = ?`;
 const QUERY_FIND_USER_BY_NAME = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE username = ?`;
 const QUERY_FIND_USER_BY_EMAIL = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE email = ?`;
-
-const QUERY_IS_USERNAME_AVAILABLE = `SELECT COUNT(id) as row_count_with_this_username FROM user WHERE username = ?`;
 
 export class UserRepository {
     constructor(private connectionPool: Pool) {}
@@ -21,8 +22,12 @@ export class UserRepository {
 
     public async create(user: InsertUserPayload): Promise<UserId> {
         try {
-            const createdUser = await this.connectionPool.execute(STMT_INSERT_USER, [user.email, user.username, user.password_hash]);
-            return (createdUser[0] as { insertId: number }).insertId;
+            const createdUser = await this.connectionPool.execute<IUpdateResponse>(STMT_INSERT_USER, [
+                user.email,
+                user.username,
+                user.password_hash,
+            ]);
+            return createdUser[0].insertId;
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             if (error.code && error.code === 'ER_DUP_ENTRY') {
@@ -54,5 +59,10 @@ export class UserRepository {
             throw new UserNotFoundError('could not find user by email');
         }
         return asJavaScriptObject(foundUsers[0]);
+    }
+
+    public async updatePassword(userId: UserId, passwordHash: string) {
+        const result = await this.connectionPool.execute<IUpdateResponse>(STMT_UPDATE_PASSWORD, [passwordHash, userId]);
+        return result[0].affectedRows == 1;
     }
 }
