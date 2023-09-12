@@ -9,6 +9,9 @@
   "oauth": {
     "google": {
       "clientId": "780037090676-bjn253sl8qjl24iehu7t1m24rfok238b.apps.googleusercontent.com"
+    },
+    "apple": {
+      "clientId": "re.movemo.movemore"
     }
   }
 }
