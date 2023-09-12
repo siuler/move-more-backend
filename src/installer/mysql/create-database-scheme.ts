@@ -23,6 +23,7 @@ export async function createDatabaseScheme() {
 
     await createUserTable(connection);
     await createRefreshTokenTable(connection);
+    await createRecoveryCodeTable(connection);
     await createOauthTable(connection);
 
     await createFriendTable(connection);
@@ -57,6 +58,20 @@ async function createRefreshTokenTable(connection: Connection) {
 		    FOREIGN KEY (user_id)
 		        REFERENCES user(id)
 		        ON DELETE CASCADE
+		)
+	`);
+}
+
+async function createRecoveryCodeTable(connection: Connection) {
+    await connection.execute(`
+		CREATE TABLE IF NOT EXISTS recovery_code(
+			user_id ${USER_ID_TYPE} UNIQUE,
+			code CHAR(6),
+			timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			PRIMARY KEY (user_id),
+			FOREIGN KEY (user_id)
+				REFERENCES user(id)
+				ON DELETE CASCADE
 		)
 	`);
 }

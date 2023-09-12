@@ -32,6 +32,7 @@
     "typescript": "^5.0.2"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.410.0",
     "bcrypt": "^5.1.0",
     "fastify": "^4.14.1",
     "google-auth-library": "^9.0.0",
