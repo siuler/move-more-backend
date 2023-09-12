@@ -4,6 +4,7 @@ import * as jwt from 'jsonwebtoken';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { AuthenticatedFastifyRequest } from './authenticated-request';
 import { parseJwt } from '../../util';
+import { JWT_PRIVATE_KEY } from '../ssl/jwt-key';
 
 export function authenticate(request: FastifyRequest, reply: FastifyReply, done: () => void) {
     const authHeader = request.headers.authorization;
@@ -16,7 +17,7 @@ export function authenticate(request: FastifyRequest, reply: FastifyReply, done:
 
     const jwtToken = authHeader.replace('Bearer ', '');
     try {
-        jwt.verify(jwtToken, 'TODO: USE SSL CERT', { ignoreExpiration: false });
+        jwt.verify(jwtToken, JWT_PRIVATE_KEY, { ignoreExpiration: false });
         extendFastifyRequest(jwtToken, request);
         done();
     } catch (error: unknown) {

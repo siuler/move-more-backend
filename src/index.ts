@@ -24,6 +24,7 @@ import { StatisticController } from './domain/statistic/controller/statistic.con
 import { OAuthRepository } from './domain/user/oauth/oauth-repository';
 import { OAuthService } from './domain/user/oauth/oauth-service';
 import { OAuthController } from './domain/user/oauth/oauth-controller';
+import { JWT_PRIVATE_KEY } from './general/server/ssl/jwt-key';
 import { RecoverAccountController } from './domain/user/recover/recover.controller';
 import { RecoverAccountService } from './domain/user/recover/recover-service';
 import { MailClient } from './general/mail/mail-client';
@@ -35,7 +36,7 @@ install().then(async () => {
     const mailClient = new MailClient();
 
     const tokenRepository = new TokenRepository(connectionPool);
-    const tokenService = new TokenService('TODO: USE SSL CERT', tokenRepository);
+    const tokenService = new TokenService(JWT_PRIVATE_KEY, tokenRepository);
 
     const userRepository = new UserRepository(connectionPool);
     const userService = new UserService(userRepository, tokenService);
