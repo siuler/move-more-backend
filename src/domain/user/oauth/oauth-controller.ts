@@ -10,6 +10,7 @@ import { BadRequestError } from '../../../general/server/controller/error/bad-re
 import { OAuthProvider } from './provider/oauth-provider';
 import { GoogleOAuthProvider } from './provider/google-oauth-provider';
 import { AppleOAuthProvider } from './provider/apple-oauth-provider';
+import { TECHNICAL_USER_NOT_REGISTERED } from '../../../general/server/technical-errors';
 
 export class OAuthController implements RouteTarget {
     constructor(private oauthService: OAuthService) {
@@ -41,7 +42,7 @@ export class OAuthController implements RouteTarget {
             } else if (error instanceof InvalidTokenError) {
                 throw new BadRequestError('the provided oauth token is invalid');
             } else if (error instanceof UserNotFoundError) {
-                throw new NotFoundError('TECHNICAL_USER_NOT_REGISTERED');
+                throw new NotFoundError(TECHNICAL_USER_NOT_REGISTERED);
             }
             throw error;
         }

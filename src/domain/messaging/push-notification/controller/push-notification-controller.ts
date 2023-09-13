@@ -6,6 +6,7 @@ import { REGISTER_PUSH_NOTIFICATION_TOKEN_SCHEMA, RegisterPushNotificationTokenP
 import { PushNotificationService } from '../service/push-notification-service';
 import { PushNotificationTokenAlreadyExistsError, PushNotificationTokenTooLongError } from '../push-notification-error';
 import { BadRequestError } from '../../../../general/server/controller/error/bad-request-error';
+import { TECHNICAL_DEVICE_TOKEN_ALREADY_REGISTERED } from '../../../../general/server/technical-errors';
 
 export class PushNotificationController implements RouteTarget {
     constructor(private pushNotificationService: PushNotificationService) {}
@@ -31,7 +32,7 @@ export class PushNotificationController implements RouteTarget {
             if (e instanceof PushNotificationTokenTooLongError) {
                 throw new BadRequestError('the provided token is too long');
             } else if (e instanceof PushNotificationTokenAlreadyExistsError) {
-                throw new BadRequestError('the push notification token was already added');
+                throw new BadRequestError(TECHNICAL_DEVICE_TOKEN_ALREADY_REGISTERED);
             }
             throw e;
         }

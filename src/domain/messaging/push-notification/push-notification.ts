@@ -5,5 +5,5 @@ export interface DBPushNotificationToken extends RowDataPacket {
 }
 
 export abstract class PushNotification {
-    constructor(protected title: string, protected body: string) {}
+    constructor(public readonly title: string, public readonly body: string) {}
 }
