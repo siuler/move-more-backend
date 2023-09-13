@@ -1,7 +1,7 @@
 import { Migration } from '../migration';
 import { USER_ID_TYPE } from '../types';
 
-export class MigrationCreateRefreshTokenTable extends Migration {
+export default class MigrationCreateRefreshTokenTable extends Migration {
     public readonly migrationVersion = 3;
     async up(): Promise<void> {
         await this.connection.execute(`
