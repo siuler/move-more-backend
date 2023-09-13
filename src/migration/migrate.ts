@@ -1,27 +1,9 @@
 import { Connection, createConnection } from 'mysql2/promise';
 import * as applicationConfig from '../config/config.json';
 import { DBMigrationVersionResult } from './types';
-import { MigrationCreateMigrationTable } from './mysql/0001-create-migration-table';
-import { MigrationCreateUserTable } from './mysql/0002-create-user-table';
-import { MigrationCreateRefreshTokenTable } from './mysql/0003-create-refresh-token-table';
-import { MigrationCreateRecoveryCodeTable } from './mysql/0004-create-recovery-code-table';
-import { MigrationCreateOAuthTable } from './mysql/0005-create-oauth-table';
-import { MigrationCreateFriendTable } from './mysql/0006-create-friend-table';
-import { MigrationCreateFriendRequestTable } from './mysql/0007-create-friend-request-table';
-import { MigrationCreateExerciseTable } from './mysql/0008-create-exercise-table';
-import { MigrationCreatePerformedExerciseTable } from './mysql/0009-create-performed-exercise-table';
-
-const MIGRATIONS = [
-    MigrationCreateMigrationTable,
-    MigrationCreateUserTable,
-    MigrationCreateRefreshTokenTable,
-    MigrationCreateRecoveryCodeTable,
-    MigrationCreateOAuthTable,
-    MigrationCreateFriendTable,
-    MigrationCreateFriendRequestTable,
-    MigrationCreateExerciseTable,
-    MigrationCreatePerformedExerciseTable,
-];
+import * as fs from 'fs';
+import { Logger } from '../general/logger';
+import * as path from 'path';
 
 export async function migrate() {
     const connection = await connect();
@@ -48,9 +30,10 @@ async function createDatabase(connection: Connection) {
 async function runMigrations(connection: Connection) {
     const currentMigrationVersion = await getCurrentMigrationVersion(connection);
 
-    let upgradedVersion = currentMigrationVersion;
+    const migrations = await getMigrations();
 
-    for (const migrationClass of MIGRATIONS) {
+    let upgradedVersion = currentMigrationVersion;
+    for (const migrationClass of migrations) {
         const migration = new migrationClass(connection);
         if (migration.migrationVersion <= currentMigrationVersion) {
             continue;
@@ -63,6 +46,23 @@ async function runMigrations(connection: Connection) {
     }
 
     await saveUpgradedMigrationVersion(connection, upgradedVersion);
+}
+
+async function getMigrations() {
+    const migrations = [];
+    const migrationsDirectory = path.join(__dirname, 'mysql');
+    const files = fs.readdirSync(migrationsDirectory);
+    for (const file of files) {
+        Logger.warnIf(!file.endsWith('.ts'), 'found file in migrations folder that is not a .ts file', file);
+        const filePath = path.join(migrationsDirectory, file);
+        const module = await import(filePath);
+        if (!module.default) {
+            Logger.warn('found migration without default export', file);
+            continue;
+        }
+        migrations.push(module.default);
+    }
+    return migrations;
 }
 
 async function getCurrentMigrationVersion(connection: Connection): Promise<number> {

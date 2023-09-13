@@ -1,7 +1,7 @@
 import { Migration } from '../migration';
 import { USER_ID_TYPE } from '../types';
 
-export class MigrationCreateRecoveryCodeTable extends Migration {
+export default class MigrationCreateRecoveryCodeTable extends Migration {
     public readonly migrationVersion = 4;
     async up(): Promise<void> {
         await this.connection.execute(`
