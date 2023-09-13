@@ -27,14 +27,20 @@ import { OAuthController } from './domain/user/oauth/oauth-controller';
 import { JWT_PRIVATE_KEY } from './general/server/ssl/jwt-key';
 import { RecoverAccountController } from './domain/user/recover/recover.controller';
 import { RecoverAccountService } from './domain/user/recover/recover-service';
-import { MailClient } from './general/mail/mail-client';
+import { MailClient } from './domain/messaging/mail/mail-client';
 import { RecoveryCodeRepository } from './domain/user/recover/recovery-code-repository';
 import { Logger } from './general/logger';
+import { PushNotificationController } from './domain/messaging/push-notification/controller/push-notification-controller';
+import { PushNotificationService } from './domain/messaging/push-notification/service/push-notification-service';
+import { PushNotificationRepository } from './domain/messaging/push-notification/service/push-notification-repository';
 
 migrate().then(async () => {
     await MysqlConnectionPool.initialize();
     const connectionPool = MysqlConnectionPool.getInstance();
     const mailClient = new MailClient();
+
+    const pushNotificationRepository = new PushNotificationRepository(connectionPool);
+    const pushNotificationService = new PushNotificationService(pushNotificationRepository);
 
     const tokenRepository = new TokenRepository(connectionPool);
     const tokenService = new TokenService(JWT_PRIVATE_KEY, tokenRepository);
@@ -66,6 +72,7 @@ migrate().then(async () => {
         new TokenController(tokenService, userService),
         new UserController(userService),
         new OAuthController(oAuthService),
+        new PushNotificationController(pushNotificationService),
         new RecoverAccountController(recoverAccountService),
         new FriendController(friendService),
         new RankingController(rankingService),

@@ -1,5 +1,5 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
-import * as applicationConfig from '../../config/config.json';
+import * as applicationConfig from '../../../config/config.json';
 import { Mail } from './mail';
 
 export class MailClient {

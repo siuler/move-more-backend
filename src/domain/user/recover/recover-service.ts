@@ -1,4 +1,4 @@
-import { MailClient } from '../../../general/mail/mail-client';
+import { MailClient } from '../../messaging/mail/mail-client';
 import { UserService } from '../user-service';
 import { randomInt } from 'crypto';
 import { RecoveryCodeRepository } from './recovery-code-repository';

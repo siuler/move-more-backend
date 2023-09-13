@@ -3,12 +3,22 @@ import pino from 'pino';
 export class Logger {
     private static logger = pino();
 
+    public static debug(...logMessages: unknown[]) {
+        this.logger.debug(this.stringifyMessage(...logMessages));
+    }
+
     public static info(...logMessages: unknown[]) {
         this.logger.info(this.stringifyMessage(...logMessages));
     }
 
     public static warn(...logMessages: unknown[]) {
         this.logger.warn(this.stringifyMessage(...logMessages));
+    }
+
+    public static warnIf(predicate: boolean, ...logMessages: unknown[]) {
+        if (predicate) {
+            this.warn(...logMessages);
+        }
     }
 
     public static error(...logMessages: unknown[]) {
