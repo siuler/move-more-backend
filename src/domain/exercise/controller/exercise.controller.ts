@@ -25,7 +25,7 @@ export class ExerciseController implements RouteTarget {
     }
 
     public async listExercises(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
-        const exercises = await this.exerciseService.listExercises();
+        const exercises = await this.exerciseService.listExercises(request.userId);
         reply.status(200).send(exercises);
     }
 
