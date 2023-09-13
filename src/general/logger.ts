@@ -11,6 +11,10 @@ export class Logger {
         this.logger.warn(this.stringifyMessage(...logMessages));
     }
 
+    public static error(...logMessages: unknown[]) {
+        this.logger.error(this.stringifyMessage(...logMessages));
+    }
+
     private static stringifyMessage(...logMessages: unknown[]): string {
         return logMessages
             .map(message => {
