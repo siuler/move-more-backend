@@ -29,6 +29,7 @@ import { RecoverAccountController } from './domain/user/recover/recover.controll
 import { RecoverAccountService } from './domain/user/recover/recover-service';
 import { MailClient } from './general/mail/mail-client';
 import { RecoveryCodeRepository } from './domain/user/recover/recovery-code-repository';
+import { Logger } from './general/logger';
 
 install().then(async () => {
     await MysqlConnectionPool.initialize();
@@ -75,7 +76,7 @@ install().then(async () => {
     const server = new MoveMoreServer(controllers);
 
     await server.start();
-    console.info('MoveMore server started');
+    Logger.info('MoveMore server started');
 
     process.on('SIGINT', async () => {
         setTimeout(() => process.exit(1), 10 * 1000);
