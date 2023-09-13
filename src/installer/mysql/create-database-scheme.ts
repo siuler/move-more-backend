@@ -1,5 +1,6 @@
 import * as applicationConfig from '../../config/config.json';
 import { Connection, createConnection } from 'mysql2/promise';
+import { Logger } from '../../general/logger';
 
 const USER_ID_TYPE = 'MEDIUMINT UNSIGNED';
 const EXERCISE_ID_TYPE = 'TINYINT(255) UNSIGNED';
@@ -15,7 +16,7 @@ export async function createDatabaseScheme() {
 
     const [createDatabaseResult] = await connection.execute(`CREATE DATABASE IF NOT EXISTS ${databaseName} CHARACTER SET utf8`);
     if ((createDatabaseResult as unknown as { affectedRows: number }).affectedRows == 0) {
-        console.log('[INFO]: database already exists, skipping database initialization process.');
+        Logger.info('database already exists, skipping database initialization process.');
         return;
     }
 

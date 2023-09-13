@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as util from 'util';
+import { Logger } from '../logger';
 
 const readFile = util.promisify(fs.readFile);
 
@@ -23,6 +24,14 @@ export abstract class Mail {
     private fillInViewModel(template: string): string {
         for (const key of Object.keys(this.viewModel)) {
             template = template.split(`{{${key}}}`).join(this.viewModel[key]);
+        }
+        if (template.includes('{{') && template.includes('}}')) {
+            Logger.warn(
+                'not all placeholders are replaced in mail',
+                this.templateUrl.toString(),
+                'processed template length:',
+                template.length
+            );
         }
         return template;
     }
