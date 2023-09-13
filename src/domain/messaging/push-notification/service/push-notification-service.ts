@@ -5,6 +5,7 @@ import { UserId } from '../../../user/user';
 import { Logger } from '../../../../general/logger';
 import { PushNotificationRepository } from './push-notification-repository';
 import { PushNotificationTokenTooLongError } from '../push-notification-error';
+import { PushNotification } from '../push-notification';
 
 export class PushNotificationService {
     constructor(private pushNotificationRepository: PushNotificationRepository) {
@@ -21,7 +22,7 @@ export class PushNotificationService {
         return this.pushNotificationRepository.storeToken(userId, token);
     }
 
-    public async sendNotification(userId: UserId, notification: Notification) {
+    public async sendNotification(userId: UserId, notification: PushNotification) {
         const tokens = await this.pushNotificationRepository.getTokens(userId);
         if (tokens.length == 0) {
             Logger.debug('not sending message to', userId, 'because he has no FCM device token registered');
@@ -33,7 +34,7 @@ export class PushNotificationService {
         await admin.messaging().sendEach(messages);
     }
 
-    private createPushMessage(token: string, notification: Notification) {
+    private createPushMessage(token: string, notification: PushNotification) {
         return {
             notification: {
                 title: notification.title,
