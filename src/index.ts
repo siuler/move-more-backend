@@ -1,6 +1,6 @@
 import { HealthController } from './general/server/controller/health/health.controller';
 import { MoveMoreServer } from './general/server/server';
-import { install } from './installer/install';
+import { migrate } from './migration/migrate';
 import { UserService } from './domain/user/user-service';
 import { UserRepository } from './domain/user/user-repository';
 import { MysqlConnectionPool } from './repository/mysql/mysql-connection-pool';
@@ -31,7 +31,7 @@ import { MailClient } from './general/mail/mail-client';
 import { RecoveryCodeRepository } from './domain/user/recover/recovery-code-repository';
 import { Logger } from './general/logger';
 
-install().then(async () => {
+migrate().then(async () => {
     await MysqlConnectionPool.initialize();
     const connectionPool = MysqlConnectionPool.getInstance();
     const mailClient = new MailClient();
