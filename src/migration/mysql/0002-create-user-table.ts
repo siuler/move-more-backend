@@ -1,7 +1,7 @@
 import { Migration } from '../migration';
 import { USER_ID_TYPE } from '../types';
 
-export class MigrationCreateUserTable extends Migration {
+export default class MigrationCreateUserTable extends Migration {
     public readonly migrationVersion = 2;
     async up(): Promise<void> {
         await this.connection.execute(`

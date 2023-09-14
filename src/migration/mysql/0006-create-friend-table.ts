@@ -1,7 +1,7 @@
 import { Migration } from '../migration';
 import { USER_ID_TYPE } from '../types';
 
-export class MigrationCreateFriendTable extends Migration {
+export default class MigrationCreateFriendTable extends Migration {
     public readonly migrationVersion = 6;
     async up(): Promise<void> {
         await this.connection.execute(`
