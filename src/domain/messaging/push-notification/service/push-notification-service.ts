@@ -24,6 +24,7 @@ export class PushNotificationService {
 
     public async sendNotification(userId: UserId, notification: PushNotification) {
         const tokens = await this.pushNotificationRepository.getTokens(userId);
+        Logger.info('sending push notification to', userId);
         if (tokens.length == 0) {
             Logger.debug('not sending message to', userId, 'because he has no FCM device token registered');
             return;

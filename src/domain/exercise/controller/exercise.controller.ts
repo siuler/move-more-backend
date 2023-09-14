@@ -5,7 +5,7 @@ import { authenticate } from '../../../general/server/middleware/authentication'
 import { ExercisePerformedParams, ExercisePerformedPayload, ExerciseSet } from '../exercise';
 import { ExerciseService } from '../exercise-service';
 import { TRAINING_ABSOLVED_SCHEMA } from './exercise-schema';
-import { ExerciseDoesNotExistError } from '../exercise-error';
+import { ExerciseNotFoundError } from '../exercise-error';
 import { NotFoundError } from '../../../general/server/controller/error/not-found-error';
 
 export class ExerciseController implements RouteTarget {
@@ -41,7 +41,7 @@ export class ExerciseController implements RouteTarget {
         try {
             await this.exerciseService.handleExerciseAbsolved(exerciseSet);
         } catch (error: unknown) {
-            if (error instanceof ExerciseDoesNotExistError) {
+            if (error instanceof ExerciseNotFoundError) {
                 throw new NotFoundError('the specified exercise id does not exist');
             }
             throw error;
