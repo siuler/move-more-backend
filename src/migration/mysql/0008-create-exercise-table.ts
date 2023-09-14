@@ -1,7 +1,7 @@
 import { Migration } from '../migration';
 import { EXERCISE_ID_TYPE } from '../types';
 
-export class MigrationCreateExerciseTable extends Migration {
+export default class MigrationCreateExerciseTable extends Migration {
     public readonly migrationVersion = 8;
     async up(): Promise<void> {
         await this.connection.execute(`

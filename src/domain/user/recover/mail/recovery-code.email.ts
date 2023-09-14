@@ -1,5 +1,5 @@
 import path from 'path';
-import { Mail } from '../../../../general/mail/mail';
+import { Mail } from '../../../messaging/mail/mail';
 
 export type RecoveryCodeViewModel = {
     recoveryCode: string;

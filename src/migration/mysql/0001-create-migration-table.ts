@@ -1,6 +1,6 @@
 import { Migration } from '../migration';
 
-export class MigrationCreateMigrationTable extends Migration {
+export default class MigrationCreateMigrationTable extends Migration {
     public readonly migrationVersion = 1;
 
     async up() {
