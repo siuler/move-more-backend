@@ -1,1 +1,1 @@
-export class ExerciseDoesNotExistError extends Error {}
+export class ExerciseNotFoundError extends Error {}
