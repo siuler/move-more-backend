@@ -4,6 +4,6 @@ export interface DBPushNotificationToken extends RowDataPacket {
     token: string;
 }
 
-export abstract class PushNotification {
+export class PushNotification {
     constructor(public readonly title: string, public readonly body: string) {}
 }
