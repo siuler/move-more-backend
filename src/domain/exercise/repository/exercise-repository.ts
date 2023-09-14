@@ -1,6 +1,6 @@
-import { Exercise, ExerciseSet, DBExercise, NewExercise } from '../exercise';
+import { Exercise, ExerciseSet, DBExercise, NewExercise, ExerciseId } from '../exercise';
 import { Pool } from 'mysql2/promise';
-import { ExerciseDoesNotExistError } from '../exercise-error';
+import { ExerciseNotFoundError } from '../exercise-error';
 import { asJavaScriptObject, isMySqlError } from '../../../repository/mysql/types';
 import { UserId } from '../../user/user';
 
@@ -18,6 +18,8 @@ const QUERY_LIST_EXERCISES_SORTED = `
     ORDER BY counts.count DESC;
 `;
 
+const QUERY_FIND_BY_ID = `SELECT * FROM exercise WHERE id=?`;
+
 const STMT_INSERT_PERFORMED_EXERCISE = `INSERT INTO performed_exercise(user_id, exercise_id, repetitions) VALUES (?,?,?)`;
 const STMT_INSERT_EXERCISE = `INSERT INTO exercise(name,pluralized_name,image_url) VALUES(?,?,?)`;
 
@@ -29,6 +31,14 @@ export class ExerciseRepository {
         return exercises.map(asJavaScriptObject);
     }
 
+    public async findById(exerciseId: ExerciseId): Promise<Exercise> {
+        const [exercises] = await this.connectionPool.query<DBExercise[]>(QUERY_FIND_BY_ID, [exerciseId]);
+        if (exercises.length == 0) {
+            throw new ExerciseNotFoundError();
+        }
+        return asJavaScriptObject(exercises[0]);
+    }
+
     public async persistAbsolvedExercise(exerciseSet: ExerciseSet) {
         try {
             await this.connectionPool.execute(STMT_INSERT_PERFORMED_EXERCISE, [
@@ -38,7 +48,7 @@ export class ExerciseRepository {
             ]);
         } catch (error: unknown) {
             if (isMySqlError(error) && error.code && error.code === 'ER_NO_REFERENCED_ROW_2') {
-                throw new ExerciseDoesNotExistError();
+                throw new ExerciseNotFoundError();
             }
             throw error;
         }
