@@ -33,6 +33,7 @@ import { Logger } from './general/logger';
 import { PushNotificationController } from './domain/messaging/push-notification/controller/push-notification-controller';
 import { PushNotificationService } from './domain/messaging/push-notification/service/push-notification-service';
 import { PushNotificationRepository } from './domain/messaging/push-notification/service/push-notification-repository';
+import { PushNotificationInternalEventListener } from './domain/messaging/push-notification/push-notification-internal-event-listener';
 
 migrate().then(async () => {
     await MysqlConnectionPool.initialize();
@@ -84,6 +85,9 @@ migrate().then(async () => {
 
     await server.start();
     Logger.info('MoveMore server started');
+
+    new PushNotificationInternalEventListener(rankingService, pushNotificationService, exerciseService, userService);
+    Logger.info('PushNotification listener registered');
 
     process.on('SIGINT', async () => {
         setTimeout(() => process.exit(1), 10 * 1000);
