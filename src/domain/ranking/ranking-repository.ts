@@ -1,12 +1,11 @@
 import { Pool } from 'mysql2/promise';
 import { UserId } from '../user/user';
-import { DBRankedUser, RankedUser } from './ranking';
+import { DBRankedUser, RankedUser, RankingTimespan } from './ranking';
 import { ExerciseId } from '../exercise/exercise';
-import { Seconds } from '../../general/types';
 import { asJavaScriptObject } from '../../repository/mysql/types';
 
 const QUERY_GET_RANKED_FRIEND_LIST = `
-    SELECT 
+    SELECT
         user.id as user_id,
         user.username as username,
         COALESCE(SUM(performed_exercise.repetitions),0) AS score
@@ -14,8 +13,8 @@ const QUERY_GET_RANKED_FRIEND_LIST = `
     LEFT JOIN performed_exercise
         ON performed_exercise.user_id = user.id
             AND performed_exercise.exercise_id = ?
-            AND performed_exercise.timestamp > NOW() - INTERVAL ? SECOND
-    WHERE 
+            AND DATE(performed_exercise.timestamp) > DATE_SUB(CURDATE(), INTERVAL ? DAY)
+    WHERE
         user.id IN (?)
     GROUP BY user.id
     ORDER BY score DESC
@@ -24,10 +23,10 @@ const QUERY_GET_RANKED_FRIEND_LIST = `
 export class RankingRepository {
     constructor(private connectionPool: Pool) {}
 
-    public async rankUserIds(userIds: UserId[], exerciseId: ExerciseId, timespanInSeconds: Seconds): Promise<RankedUser[]> {
+    public async rankUserIds(userIds: UserId[], exerciseId: ExerciseId, timespan: RankingTimespan): Promise<RankedUser[]> {
         const [rankedUserList] = await this.connectionPool.query<DBRankedUser[]>(QUERY_GET_RANKED_FRIEND_LIST, [
             exerciseId,
-            timespanInSeconds,
+            timespan,
             userIds,
         ]);
         rankedUserList.forEach(rankedUser => (rankedUser.score = +rankedUser.score));

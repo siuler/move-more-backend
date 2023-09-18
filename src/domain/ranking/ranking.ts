@@ -16,9 +16,9 @@ export type RankingTimespan = number;
 export type RequestRankingTimespan = '1day' | '7days' | '30days';
 
 export class RankingTimespans {
-    static RANKING_1_DAY: RankingTimespan = 60 * 60 * 24;
-    static RANKING_7_DAYS: RankingTimespan = 60 * 60 * 24 * 7;
-    static RANKING_30_DAYS: RankingTimespan = 60 * 60 * 24 * 30;
+    static RANKING_1_DAY: RankingTimespan = 1;
+    static RANKING_7_DAYS: RankingTimespan = 7;
+    static RANKING_30_DAYS: RankingTimespan = 30;
 
     public static fromRequestTimespan(timespan: RequestRankingTimespan): RankingTimespan {
         switch (timespan) {
