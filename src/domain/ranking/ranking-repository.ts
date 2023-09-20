@@ -17,7 +17,9 @@ const QUERY_GET_RANKED_FRIEND_LIST = `
     WHERE
         user.id IN (?)
     GROUP BY user.id
-    ORDER BY score DESC
+    ORDER BY 
+        score DESC, 
+        user.id ASC
 `;
 
 export class RankingRepository {
