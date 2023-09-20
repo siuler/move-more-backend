@@ -43,6 +43,16 @@ export class PushNotificationService {
                 body: notification.body,
             },
             data: notification.data,
+            android: {
+                priority: 'high',
+            },
+            apns: {
+                payload: {
+                    aps: {
+                        sound: notification.sound,
+                    },
+                },
+            },
             token,
         };
     }
