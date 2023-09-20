@@ -6,6 +6,7 @@ import { Logger } from '../../../../general/logger';
 import { PushNotificationRepository } from './push-notification-repository';
 import { PushNotificationTokenTooLongError } from '../push-notification-error';
 import { PushNotification } from '../push-notification';
+import { Message } from 'firebase-admin/lib/messaging/messaging-api';
 
 export class PushNotificationService {
     constructor(private pushNotificationRepository: PushNotificationRepository) {
@@ -35,12 +36,13 @@ export class PushNotificationService {
         await admin.messaging().sendEach(messages);
     }
 
-    private createPushMessage(token: string, notification: PushNotification) {
+    private createPushMessage(token: string, notification: PushNotification): Message {
         return {
             notification: {
                 title: notification.title,
                 body: notification.body,
             },
+            data: notification.data,
             token,
         };
     }
