@@ -4,7 +4,7 @@ import { ExerciseService } from '../../exercise/exercise-service';
 import { RankingTimespans } from '../../ranking/ranking';
 import { RankingService } from '../../ranking/ranking-service';
 import { UserService } from '../../user/user-service';
-import { PushNotification } from './push-notification';
+import { PushNotificationOvertaken } from './notification/push-notification-overtaken';
 import { PushNotificationService } from './service/push-notification-service';
 
 export class PushNotificationInternalEventListener {
@@ -21,9 +21,7 @@ export class PushNotificationInternalEventListener {
         const overtakenUsersIds = await this.rankingService.getOvertakenFriends(event.data, RankingTimespans.RANKING_1_DAY);
         const exercise = await this.exerciseService.findById(event.data.exerciseId);
         const username = await this.userService.getUsername(event.data.userId);
-        const notification = new PushNotification(`MoveMore ${exercise.pluralizedName}`, `You have been overtaken by ${username}`, {
-            exerciseId: event.data.exerciseId.toString(),
-        });
+        const notification = new PushNotificationOvertaken(exercise, username);
 
         for (const overtakenUserId of overtakenUsersIds) {
             this.pushNotificationService.sendNotification(overtakenUserId, notification);
