@@ -9,6 +9,7 @@ export default class MigrationCreateFriendAddTokenTable extends Migration {
                 addable_user_id ${USER_ID_TYPE},
                 token VARCHAR(8) UNIQUE,
                 expiry TIMESTAMP,
+                PRIMARY KEY(token),
                 FOREIGN KEY (addable_user_id)
                     REFERENCES user(id)
                     ON DELETE CASCADE

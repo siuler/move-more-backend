@@ -34,6 +34,7 @@ import { PushNotificationController } from './domain/messaging/push-notification
 import { PushNotificationService } from './domain/messaging/push-notification/service/push-notification-service';
 import { PushNotificationRepository } from './domain/messaging/push-notification/service/push-notification-repository';
 import { PushNotificationInternalEventListener } from './domain/messaging/push-notification/push-notification-internal-event-listener';
+import { FriendAddTokenRepository } from './domain/friend/friend-add-token-repository';
 
 migrate().then(async () => {
     await MysqlConnectionPool.initialize();
@@ -57,7 +58,14 @@ migrate().then(async () => {
 
     const friendRepository = new FriendRepository(connectionPool);
     const friendRequestRepository = new FriendRequestRepository(connectionPool);
-    const friendService = new FriendService(friendRepository, friendRequestRepository, userService, pushNotificationService);
+    const friendAddTokenRepository = new FriendAddTokenRepository(connectionPool);
+    const friendService = new FriendService(
+        friendRepository,
+        friendRequestRepository,
+        friendAddTokenRepository,
+        userService,
+        pushNotificationService
+    );
 
     const rankingRepository = new RankingRepository(connectionPool);
     const rankingService = new RankingService(rankingRepository, friendService);
