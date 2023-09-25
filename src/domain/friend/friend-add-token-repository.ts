@@ -26,7 +26,7 @@ export class FriendAddTokenRepository {
         }
         const tokenInformation = asJavaScriptObject(friendRequests[0]) as FriendAddTokenInformation;
         tokenInformation.expiry = new Date(tokenInformation.expiry);
-        return asJavaScriptObject(friendRequests[0]);
+        return tokenInformation;
     }
 
     public async saveToken(addableUser: UserId, token: FriendAddToken, expiryDate: Date) {

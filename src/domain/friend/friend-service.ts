@@ -125,12 +125,12 @@ export class FriendService {
     }
 
     private generateFriendAddToken(): FriendAddToken {
-        const randomValues = crypto.getRandomValues(new Uint8Array(8));
         const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         let randomString = '';
 
         for (let i = 0; i < 8; i++) {
-            randomString += characters.charAt(randomValues[i]);
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            randomString += characters.charAt(randomIndex);
         }
 
         return randomString as FriendAddToken;
