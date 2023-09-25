@@ -4,8 +4,10 @@ import { authenticate } from '../../../general/server/middleware/authentication'
 import { FriendService } from '../friend-service';
 import { AuthenticatedFastifyRequest } from '../../../general/server/middleware/authenticated-request';
 import {
+    REDEEM_FRIEND_ADD_TOKEN_SCHEMA,
     REJECT_FRIEND_REQUEST_SCHEMA,
     REMOVE_FRIEND_SCHEMA,
+    RedeemFriendAddtokenParams,
     RejectFriendRequestParams,
     RemoveFriendParams,
     SEARCH_FRIEND_SCHEMA,
@@ -24,6 +26,10 @@ import {
 import { ConflictError } from '../../../general/server/controller/error/conflict-error';
 import { UserNotFoundError } from '../../user/user-error';
 import { NotFoundError } from '../../../general/server/controller/error/not-found-error';
+import { FriendAddTokenExpiredError, InvalidFriendAddTokenError } from '../friend-error';
+import { TECHNICAL_FRIEND_ADD_TOKEN_EXPIRED } from '../../../general/server/technical-errors';
+
+const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
 export class FriendController implements RouteTarget {
     constructor(private friendService: FriendService) {}
@@ -69,6 +75,19 @@ export class FriendController implements RouteTarget {
                 preValidation: authenticate,
                 handler: this.removeFriend.bind(this),
                 schema: REMOVE_FRIEND_SCHEMA,
+            },
+            {
+                url: '/friend/token',
+                method: 'POST',
+                preValidation: authenticate,
+                handler: this.createFriendAddToken.bind(this),
+            },
+            {
+                url: '/friend/token/:token',
+                method: 'POST',
+                preValidation: authenticate,
+                handler: this.redeemFriendAddToken.bind(this),
+                schema: REDEEM_FRIEND_ADD_TOKEN_SCHEMA,
             },
         ];
     }
@@ -138,6 +157,26 @@ export class FriendController implements RouteTarget {
                 throw new BadRequestError('you were not friends');
             }
             throw error;
+        }
+    }
+
+    public async createFriendAddToken(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
+        const token = await this.friendService.createFriendAddToken(request.userId, ONE_DAY_IN_SECONDS);
+        reply.status(200).send({ token });
+    }
+
+    public async redeemFriendAddToken(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
+        const params = request.params as RedeemFriendAddtokenParams;
+        try {
+            await this.friendService.redeemFriendAddToken(request.userId, params.token);
+            reply.status(200).send();
+        } catch (e) {
+            if (e instanceof FriendAddTokenExpiredError) {
+                throw new BadRequestError(TECHNICAL_FRIEND_ADD_TOKEN_EXPIRED);
+            } else if (e instanceof InvalidFriendAddTokenError) {
+                throw new NotFoundError('friend add token not found');
+            }
+            throw e;
         }
     }
 }
