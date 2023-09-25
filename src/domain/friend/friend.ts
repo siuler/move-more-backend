@@ -32,3 +32,12 @@ export interface DBFriendRequest extends RowDataPacket {
     username: string;
 }
 export type FriendRequest = JavaScriptObject<DBFriendRequest>;
+
+export type FriendAddToken = `[a-zA-Z0-9]{8}`;
+
+export interface DBFriendAddTokenInformation extends RowDataPacket {
+    user_id: number;
+    username: string;
+    expiry: string;
+}
+export type FriendAddTokenInformation = Omit<JavaScriptObject<DBFriendAddTokenInformation>, 'expiry'> & { expiry: Date };

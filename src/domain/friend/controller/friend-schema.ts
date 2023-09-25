@@ -1,4 +1,5 @@
 import { FastifySchema } from 'fastify';
+import { FriendAddToken } from '../friend';
 
 export const SEARCH_FRIEND_SCHEMA: FastifySchema = {
     params: {
@@ -51,4 +52,17 @@ export const REMOVE_FRIEND_SCHEMA: FastifySchema = {
 };
 export type RemoveFriendParams = {
     friendId: number;
+};
+
+export const REDEEM_FRIEND_ADD_TOKEN_SCHEMA: FastifySchema = {
+    params: {
+        type: 'object',
+        properties: {
+            token: { type: 'string' },
+        },
+        required: ['token'],
+    },
+};
+export type RedeemFriendAddtokenParams = {
+    token: FriendAddToken;
 };
