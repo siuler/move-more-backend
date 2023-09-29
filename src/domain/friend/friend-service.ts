@@ -102,6 +102,9 @@ export class FriendService {
 
     public async redeemFriendAddToken(redeemer: UserId, token: FriendAddToken) {
         const tokenInformation = await this.friendAddTokenRepository.getTokenInformation(token);
+        if (tokenInformation.userId == redeemer) {
+            throw new CantAddSelfAsFriendError();
+        }
         if (tokenInformation.expiry.getTime() < Date.now()) {
             throw new FriendAddTokenExpiredError();
         }
