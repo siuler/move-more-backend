@@ -170,13 +170,13 @@ export class FriendController implements RouteTarget {
         try {
             await this.friendService.redeemFriendAddToken(request.userId, params.token);
             reply.status(200).send();
-        } catch (e) {
-            if (e instanceof FriendAddTokenExpiredError) {
+        } catch (error) {
+            if (error instanceof FriendAddTokenExpiredError || error instanceof InvalidFriendAddTokenError) {
                 throw new BadRequestError(TECHNICAL_FRIEND_ADD_TOKEN_EXPIRED);
-            } else if (e instanceof InvalidFriendAddTokenError) {
-                throw new NotFoundError('friend add token not found');
+            } else if (error instanceof CantAddSelfAsFriendError) {
+                throw new BadRequestError('you can not add yourself as a friend');
             }
-            throw e;
+            throw error;
         }
     }
 }
