@@ -173,6 +173,8 @@ export class FriendController implements RouteTarget {
         } catch (error) {
             if (error instanceof FriendAddTokenExpiredError || error instanceof InvalidFriendAddTokenError) {
                 throw new BadRequestError(TECHNICAL_FRIEND_ADD_TOKEN_EXPIRED);
+            } else if (error instanceof AlreadyFriendsError) {
+                throw new BadRequestError('you are already friends');
             } else if (error instanceof CantAddSelfAsFriendError) {
                 throw new BadRequestError('you can not add yourself as a friend');
             }

@@ -108,6 +108,9 @@ export class FriendService {
         if (tokenInformation.expiry.getTime() < Date.now()) {
             throw new FriendAddTokenExpiredError();
         }
+        if (await this.areFriends(redeemer, tokenInformation.userId)) {
+            throw new AlreadyFriendsError();
+        }
         await this.befriend(tokenInformation.userId, redeemer);
     }
 
