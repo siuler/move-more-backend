@@ -15,7 +15,7 @@ const QUERY_LIST_FRIEND_REQUESTS = `
 const QUERY_HAS_SENT_FRIEND_REQUEST = `SELECT COUNT(*) > 0 AS has_sent_request FROM friend_request WHERE user_id=? AND friend_id=?`;
 
 const STMT_SEND_FRIEND_REQUEST = `INSERT INTO friend_request(user_id, friend_id) VALUES(?, ?)`;
-const STMT_DELETE_FRIEND_REQUEST = `DELETE FROM friend_request WHERE user_id=? and friend_id=?`;
+const STMT_DELETE_FRIEND_REQUEST = `DELETE FROM friend_request WHERE (user_id=? and friend_id=?) or (user_id=? and friend_id=?)`;
 
 export class FriendRequestRepository {
     constructor(private connectionPool: Pool) {}
@@ -37,7 +37,7 @@ export class FriendRequestRepository {
     }
 
     public async removeFriendRequest(from: UserId, to: UserId) {
-        await this.connectionPool.execute(STMT_DELETE_FRIEND_REQUEST, [from, to]);
+        await this.connectionPool.execute(STMT_DELETE_FRIEND_REQUEST, [from, to, to, from]);
     }
 
     public async hasSentFriendRequest(sender: UserId, receiver: UserId): Promise<boolean> {
