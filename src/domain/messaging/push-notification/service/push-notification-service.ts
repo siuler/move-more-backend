@@ -5,9 +5,8 @@ import { UserId } from '../../../user/user';
 import { Logger } from '../../../../general/logger';
 import { PushNotificationRepository } from './push-notification-repository';
 import { PushNotificationTokenTooLongError } from '../push-notification-error';
-import { PushNotification } from '../push-notification';
+import { PushNotificationType, PushNotification } from '../push-notification';
 import { Message } from 'firebase-admin/lib/messaging/messaging-api';
-import { NotificationType } from '@aws-sdk/client-ses';
 
 export class PushNotificationService {
     constructor(private pushNotificationRepository: PushNotificationRepository) {
@@ -24,6 +23,14 @@ export class PushNotificationService {
         return this.pushNotificationRepository.storeToken(userId, token);
     }
 
+    public async sendNotificationWithoutSpam(maxOfTypePerDay: number, userId: UserId, notification: PushNotification) {
+        const notificationCountReceivedToday = await this.getReceivedNotificationCountOfType(userId, notification.notificationType);
+        if (notificationCountReceivedToday >= maxOfTypePerDay) {
+            return;
+        }
+        this.sendNotification(userId, notification);
+    }
+
     public async sendNotification(userId: UserId, notification: PushNotification) {
         const tokens = await this.pushNotificationRepository.getTokens(userId);
         Logger.info('sending push notification to', userId);
@@ -38,7 +45,7 @@ export class PushNotificationService {
         await this.pushNotificationRepository.saveNotificationSent(userId, notification);
     }
 
-    public async getReceivedNotificationCountOfType(userId: UserId, notificationType: NotificationType) {
+    public async getReceivedNotificationCountOfType(userId: UserId, notificationType: PushNotificationType) {
         const todayBegin = new Date();
         todayBegin.setUTCHours(0);
         todayBegin.setUTCMinutes(0);
