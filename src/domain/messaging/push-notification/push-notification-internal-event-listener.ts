@@ -71,10 +71,10 @@ export class PushNotificationInternalEventListener {
             event.data.exerciseId,
             RankingTimespans.RANKING_1_DAY
         );
-        const friendsThatDidNotWorkOut = ranking.filter(friend => friend.score == 0);
+        const friendsThatDidNotMoveYet = ranking.filter(friend => friend.score == 0);
 
         const notification = new PushNotificationFirstFriendMoved(exercise, username, event.data.repetitions);
-        friendsThatDidNotWorkOut.forEach(friend =>
+        friendsThatDidNotMoveYet.forEach(friend =>
             this.pushNotificationService.sendNotificationWithoutSpam(1, friend.userId, notification)
         );
     }

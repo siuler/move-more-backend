@@ -36,7 +36,7 @@ export class PushNotificationRepository {
         await this.connectionPool.execute(STMT_INSERT_SENT_NOTIFICATION, [receiver, notification.notificationType]);
     }
 
-    public async getReceivedNotifcationCountSince(userId: UserId, notificationType: PushNotificationType, since: Date) {
+    public async countReceivedNotificationsSince(userId: UserId, notificationType: PushNotificationType, since: Date) {
         const sinceAsMySQLDate = toMySQLDate(since);
         const [[rowCounts]] = await this.connectionPool.query<DBRowCount[]>(QUERY_GET_RECEIVED_NOTIFICATION_COUNT_SINCE, [
             userId,
