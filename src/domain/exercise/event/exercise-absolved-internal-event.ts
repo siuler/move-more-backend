@@ -1,6 +1,6 @@
-import { InternalEvent } from '../../general/internal-event/internal-event';
-import { UserId } from '../user/user';
-import { ExerciseId } from './exercise';
+import { InternalEvent } from '../../../general/internal-event/internal-event';
+import { UserId } from '../../user/user';
+import { ExerciseId } from '../exercise';
 
 type ExerciseAbsolvedInternalEventData = {
     exerciseId: ExerciseId;

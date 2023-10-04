@@ -2,7 +2,8 @@ import { RowDataPacket } from 'mysql2';
 
 export type PushNotificationType =
     | 'OVERTAKEN_BY_FRIEND'
-    | 'FRIEND_ALREADY_WORKED_OUT'
+    | 'FRIEND_ALREADY_MOVED'
+    | 'NOBODY_MOVED_YET'
     | 'FRIEND_REQUEST_RECEIVED'
     | 'FRIEND_REQUEST_ACCEPTED';
 

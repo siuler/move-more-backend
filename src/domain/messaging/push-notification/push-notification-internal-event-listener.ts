@@ -1,17 +1,18 @@
 import { InternalEventBus } from '../../../general/internal-event/event-bus';
 import { Exercise } from '../../exercise/exercise';
-import { ExerciseAbsolvedInternalEvent } from '../../exercise/exercise-absolved-internal-event';
+import { ExerciseAbsolvedInternalEvent } from '../../exercise/event/exercise-absolved-internal-event';
 import { ExerciseService } from '../../exercise/exercise-service';
-import { FriendRequestAcceptedInternalEvent } from '../../exercise/friend-request-accepted-internal-event';
-import { FriendRequestSentInternalEvent } from '../../exercise/friend-request-sent-internal-event';
+import { FriendRequestAcceptedInternalEvent } from '../../friend/event/friend-request-accepted-internal-event';
 import { RankingTimespans } from '../../ranking/ranking';
 import { RankingService } from '../../ranking/ranking-service';
 import { UserService } from '../../user/user-service';
+import { NobodyMovedNotificationHandler } from './nobody-moved-notification-handler';
 import { PushNotificationFriendAlreadyWorkedOut } from './notification/push-notification-friend-already-worked-out';
 import { PushNotificationFriendRequestAccepted } from './notification/push-notification-friend-request-accepted';
 import { PushNotificationFriendRequestReceived } from './notification/push-notification-friend-request-received';
 import { PushNotificationOvertakenByFriend } from './notification/push-notification-overtaken-by-friend';
 import { PushNotificationService } from './service/push-notification-service';
+import { FriendRequestSentInternalEvent } from '../../friend/event/friend-request-sent-internal-event';
 
 export class PushNotificationInternalEventListener {
     constructor(
@@ -20,6 +21,17 @@ export class PushNotificationInternalEventListener {
         private exerciseService: ExerciseService,
         private userService: UserService
     ) {
+        const nobodyMovedNotificationHandler = new NobodyMovedNotificationHandler(
+            pushNotificationService,
+            userService,
+            exerciseService,
+            rankingService
+        );
+        InternalEventBus.on(
+            'nobody-moved-notification-time',
+            nobodyMovedNotificationHandler.sendNotifications.bind(nobodyMovedNotificationHandler)
+        );
+
         InternalEventBus.on('friend-request-sent', this.handleFriendRequestSent.bind(this));
         InternalEventBus.on('friend-request-accepted', this.handleFriendRequestAccepted.bind(this));
         InternalEventBus.on('exercise-absolved', this.handleExerciseAbsolved.bind(this));
