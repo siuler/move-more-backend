@@ -7,7 +7,7 @@ import { RankingTimespans } from '../../ranking/ranking';
 import { RankingService } from '../../ranking/ranking-service';
 import { UserService } from '../../user/user-service';
 import { NobodyMovedNotificationHandler } from './nobody-moved-notification-handler';
-import { PushNotificationFriendAlreadyWorkedOut } from './notification/push-notification-friend-already-worked-out';
+import { PushNotificationFirstFriendMoved } from './notification/push-notification-first-friend-moved';
 import { PushNotificationFriendRequestAccepted } from './notification/push-notification-friend-request-accepted';
 import { PushNotificationFriendRequestReceived } from './notification/push-notification-friend-request-received';
 import { PushNotificationOvertakenByFriend } from './notification/push-notification-overtaken-by-friend';
@@ -52,11 +52,11 @@ export class PushNotificationInternalEventListener {
     private async handleExerciseAbsolved(event: ExerciseAbsolvedInternalEvent) {
         const exercise = await this.exerciseService.findById(event.data.exerciseId);
         const username = await this.userService.getUsername(event.data.userId);
-        this.handleOvertakenByFriendNotifications(event, exercise, username);
-        this.handleFriendAlreadyWorkedOutNotifications(event, exercise, username);
+        this.sendOvertakenByFriendNotifications(event, exercise, username);
+        this.sendFirstFriendMovedNotifications(event, exercise, username);
     }
 
-    private async handleOvertakenByFriendNotifications(event: ExerciseAbsolvedInternalEvent, exercise: Exercise, username: string) {
+    private async sendOvertakenByFriendNotifications(event: ExerciseAbsolvedInternalEvent, exercise: Exercise, username: string) {
         const overtakenUsersIds = await this.rankingService.getOvertakenFriends(event.data, RankingTimespans.RANKING_1_DAY);
         const notification = new PushNotificationOvertakenByFriend(exercise, username);
 
@@ -65,7 +65,7 @@ export class PushNotificationInternalEventListener {
         }
     }
 
-    private async handleFriendAlreadyWorkedOutNotifications(event: ExerciseAbsolvedInternalEvent, exercise: Exercise, username: string) {
+    private async sendFirstFriendMovedNotifications(event: ExerciseAbsolvedInternalEvent, exercise: Exercise, username: string) {
         const ranking = await this.rankingService.getRankedFriendList(
             event.data.userId,
             event.data.exerciseId,
@@ -73,7 +73,7 @@ export class PushNotificationInternalEventListener {
         );
         const friendsThatDidNotWorkOut = ranking.filter(friend => friend.score == 0);
 
-        const notification = new PushNotificationFriendAlreadyWorkedOut(exercise, username, event.data.repetitions);
+        const notification = new PushNotificationFirstFriendMoved(exercise, username, event.data.repetitions);
         friendsThatDidNotWorkOut.forEach(friend =>
             this.pushNotificationService.sendNotificationWithoutSpam(1, friend.userId, notification)
         );

@@ -19,13 +19,13 @@ export class NobodyMovedNotificationHandler {
     public async sendNotifications() {
         Logger.info('Starting to send nobody moved notifications');
         let users = [];
-        let iteration = 0;
+        let batchIndex = 0;
         do {
-            Logger.info('Sending nobody moved notification batch', iteration);
-            users = await this.userService.listUsers(100, iteration);
+            Logger.info('Sending nobody moved notification batch', batchIndex);
+            users = await this.userService.listUsers(100, batchIndex * 100);
             await this.sendToBatch(users);
             await waitSeconds(1);
-            iteration++;
+            batchIndex++;
         } while (users.length > 0);
         Logger.info('Finished sending nobody moved notifications');
     }
