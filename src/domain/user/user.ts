@@ -18,7 +18,3 @@ export type InsertUserPayload = {
     username: string;
     password_hash: string | null;
 };
-
-export interface DBIsUserAvailableResult extends RowDataPacket {
-    row_count_with_this_username: number;
-}

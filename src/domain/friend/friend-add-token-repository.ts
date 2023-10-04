@@ -3,6 +3,7 @@ import { asJavaScriptObject, isMySqlError } from '../../repository/mysql/types';
 import { UserId } from '../user/user';
 import { DBFriendAddTokenInformation, FriendAddToken, FriendAddTokenInformation } from './friend';
 import { AddFriendTokenAlreadyExistsError, InvalidFriendAddTokenError } from './friend-error';
+import { toMySQLDate } from '../../general/mysql';
 
 const QUERY_GET_TOKEN_INFORMATION = `
     SELECT 
@@ -30,7 +31,7 @@ export class FriendAddTokenRepository {
     }
 
     public async saveToken(addableUser: UserId, token: FriendAddToken, expiryDate: Date) {
-        const mysqlExpiryDate = expiryDate.toISOString().slice(0, 19).replace('T', ' ');
+        const mysqlExpiryDate = toMySQLDate(expiryDate);
         try {
             await this.connectionPool.execute(STMT_INSERT_TOKEN, [addableUser, token, mysqlExpiryDate]);
         } catch (err: unknown) {

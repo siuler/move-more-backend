@@ -7,6 +7,7 @@ import { PushNotificationRepository } from './push-notification-repository';
 import { PushNotificationTokenTooLongError } from '../push-notification-error';
 import { PushNotification } from '../push-notification';
 import { Message } from 'firebase-admin/lib/messaging/messaging-api';
+import { NotificationType } from '@aws-sdk/client-ses';
 
 export class PushNotificationService {
     constructor(private pushNotificationRepository: PushNotificationRepository) {
@@ -34,6 +35,15 @@ export class PushNotificationService {
         const messages = tokens.map(token => this.createPushMessage(token, notification));
 
         await admin.messaging().sendEach(messages);
+        await this.pushNotificationRepository.saveNotificationSent(userId, notification);
+    }
+
+    public async getReceivedNotificationCountOfType(userId: UserId, notificationType: NotificationType) {
+        const todayBegin = new Date();
+        todayBegin.setUTCHours(0);
+        todayBegin.setUTCMinutes(0);
+        todayBegin.setUTCSeconds(0);
+        return this.pushNotificationRepository.getReceivedNotifcationCountSince(userId, notificationType, todayBegin);
     }
 
     private createPushMessage(token: string, notification: PushNotification): Message {
