@@ -2,10 +2,14 @@ import { RowDataPacket } from 'mysql2';
 import { JavaScriptObject } from '../../repository/mysql/types';
 
 export type UserId = number;
-export interface DBUser extends RowDataPacket {
+export interface DBMinimalUser extends RowDataPacket {
     id: UserId;
-    email: string;
     username: string;
+}
+export type MinimalUser = JavaScriptObject<DBMinimalUser>;
+
+export interface DBUser extends RowDataPacket, DBMinimalUser {
+    email: string;
     password_hash: string;
     register_date: string;
     verified_date: string;

@@ -1,6 +1,5 @@
 import { InternalEventBus } from '../../general/internal-event/event-bus';
-import { FriendRequestAcceptedInternalEvent } from '../exercise/friend-request-accepted-internal-event';
-import { FriendRequestSentInternalEvent } from '../exercise/friend-request-sent-internal-event';
+import { FriendRequestAcceptedInternalEvent } from './event/friend-request-accepted-internal-event';
 import { UserId } from '../user/user';
 import {
     AlreadyFriendsError,
@@ -18,6 +17,7 @@ import { FriendAddTokenRepository } from './friend-add-token-repository';
 import { AddFriendTokenAlreadyExistsError, FriendAddTokenExpiredError } from './friend-error';
 import { FriendRepository } from './friend-repository';
 import { FriendRequestRepository } from './friend-request-repository';
+import { FriendRequestSentInternalEvent } from './event/friend-request-sent-internal-event';
 
 export class FriendService {
     constructor(

@@ -1,6 +1,6 @@
 import { UserRepository } from './user-repository';
 import { compare, genSalt, hash } from 'bcrypt';
-import { InsertUserPayload, User, UserId } from './user';
+import { InsertUserPayload, MinimalUser, User, UserId } from './user';
 import { ValidationError } from '../../general/error';
 import { UserNotFoundError, WrongPasswordError } from './user-error';
 import { TokenService } from '../token/token-service';
@@ -36,6 +36,10 @@ export class UserService {
         } else {
             return await this.userRepository.findByName(emailOrUsername);
         }
+    }
+
+    public async listUsers(amount: number, offset: number): Promise<MinimalUser[]> {
+        return this.userRepository.listUsers(amount, offset);
     }
 
     public async isUsernameAvailable(username: string): Promise<boolean> {

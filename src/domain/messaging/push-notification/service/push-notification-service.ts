@@ -7,12 +7,14 @@ import { PushNotificationRepository } from './push-notification-repository';
 import { PushNotificationTokenTooLongError } from '../push-notification-error';
 import { PushNotificationType, PushNotification } from '../push-notification';
 import { Message } from 'firebase-admin/lib/messaging/messaging-api';
+import { scheduleJob } from 'node-schedule';
+import { InternalEventBus } from '../../../../general/internal-event/event-bus';
+import { NobodyMovedNotificationTimeEvent } from '../nobody-moved-notification-time-event';
 
 export class PushNotificationService {
     constructor(private pushNotificationRepository: PushNotificationRepository) {
-        admin.initializeApp({
-            credential: admin.credential.cert(asJavaScriptObject(firebaseServiceAccountKey)),
-        });
+        this.initFirebase();
+        this.setupNotificationScheduler();
     }
 
     public async storeToken(userId: UserId, token: string): Promise<void> {
@@ -51,6 +53,27 @@ export class PushNotificationService {
         todayBegin.setUTCMinutes(0);
         todayBegin.setUTCSeconds(0);
         return this.pushNotificationRepository.getReceivedNotifcationCountSince(userId, notificationType, todayBegin);
+    }
+
+    private initFirebase() {
+        admin.initializeApp({
+            credential: admin.credential.cert(asJavaScriptObject(firebaseServiceAccountKey)),
+        });
+    }
+
+    private setupNotificationScheduler() {
+        /*
+            *    *    *    *    *    * 
+            ┬    ┬    ┬    ┬    ┬    ┬
+            │    │    │    │    │    │
+            │    │    │    │    │    └ day of week (0 - 7) (0 or 7 is Sun)
+            │    │    │    │    └───── month (1 - 12)
+            │    │    │    └────────── day of month (1 - 31)
+            │    │    └─────────────── hour (0 - 23)
+            │    └──────────────────── minute (0 - 59)
+            └───────────────────────── second (0 - 59, OPTIONAL)
+         */
+        scheduleJob('0 0 8 * * *', () => InternalEventBus.emit(new NobodyMovedNotificationTimeEvent()));
     }
 
     private createPushMessage(token: string, notification: PushNotification): Message {

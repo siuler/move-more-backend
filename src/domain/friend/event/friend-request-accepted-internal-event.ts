@@ -1,5 +1,5 @@
-import { InternalEvent } from '../../general/internal-event/internal-event';
-import { UserId } from '../user/user';
+import { InternalEvent } from '../../../general/internal-event/internal-event';
+import { UserId } from '../../user/user';
 
 type FriendRequestAcceptedInternalEventData = {
     senderId: UserId;
