@@ -1,4 +1,5 @@
-import { PushNotification } from '../messaging/push-notification/push-notification';
+import { PushNotificationFriendRequestAccepted } from '../messaging/push-notification/notification/push-notification-friend-request-accepted';
+import { PushNotificationFriendRequestReceived } from '../messaging/push-notification/notification/push-notification-friend-request-received';
 import { PushNotificationService } from '../messaging/push-notification/service/push-notification-service';
 import { UserId } from '../user/user';
 import { UserService } from '../user/user-service';
@@ -120,13 +121,14 @@ export class FriendService {
             this.friendRepository.insertFriends(requestSender, receiver),
         ]);
         const receiverUsername = await this.userService.getUsername(receiver);
-        const notification = new PushNotification('MoveMore', `You are now friends with ${receiverUsername}`);
+        const notification = new PushNotificationFriendRequestAccepted(receiverUsername);
         this.pushNotificationService.sendNotification(requestSender, notification);
     }
 
     private async sendFriendRequest(requestSender: UserId, receiver: UserId) {
         await this.friendRequestRepository.sendFriendRequest(requestSender, receiver);
-        const notification = new PushNotification('MoveMore', 'You received a new friend request');
+        const senderUsername = await this.userService.getUsername(requestSender);
+        const notification = new PushNotificationFriendRequestReceived(senderUsername);
         this.pushNotificationService.sendNotification(receiver, notification);
     }
 
