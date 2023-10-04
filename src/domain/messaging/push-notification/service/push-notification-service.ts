@@ -26,7 +26,7 @@ export class PushNotificationService {
     }
 
     public async sendNotificationWithoutSpam(maxOfTypePerDay: number, userId: UserId, notification: PushNotification) {
-        const notificationCountReceivedToday = await this.getReceivedNotificationCountOfType(userId, notification.notificationType);
+        const notificationCountReceivedToday = await this.countReceivedNotificationsOfType(userId, notification.notificationType);
         if (notificationCountReceivedToday >= maxOfTypePerDay) {
             return;
         }
@@ -47,12 +47,12 @@ export class PushNotificationService {
         await this.pushNotificationRepository.saveNotificationSent(userId, notification);
     }
 
-    public async getReceivedNotificationCountOfType(userId: UserId, notificationType: PushNotificationType) {
+    public async countReceivedNotificationsOfType(userId: UserId, notificationType: PushNotificationType) {
         const todayBegin = new Date();
         todayBegin.setUTCHours(0);
         todayBegin.setUTCMinutes(0);
         todayBegin.setUTCSeconds(0);
-        return this.pushNotificationRepository.getReceivedNotifcationCountSince(userId, notificationType, todayBegin);
+        return this.pushNotificationRepository.countReceivedNotificationsSince(userId, notificationType, todayBegin);
     }
 
     private initFirebase() {
