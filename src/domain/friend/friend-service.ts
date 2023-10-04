@@ -1,7 +1,6 @@
-import { PushNotification } from '../messaging/push-notification/push-notification';
-import { PushNotificationService } from '../messaging/push-notification/service/push-notification-service';
+import { InternalEventBus } from '../../general/internal-event/event-bus';
+import { FriendRequestAcceptedInternalEvent } from './event/friend-request-accepted-internal-event';
 import { UserId } from '../user/user';
-import { UserService } from '../user/user-service';
 import {
     AlreadyFriendsError,
     CantAddSelfAsFriendError,
@@ -18,14 +17,13 @@ import { FriendAddTokenRepository } from './friend-add-token-repository';
 import { AddFriendTokenAlreadyExistsError, FriendAddTokenExpiredError } from './friend-error';
 import { FriendRepository } from './friend-repository';
 import { FriendRequestRepository } from './friend-request-repository';
+import { FriendRequestSentInternalEvent } from './event/friend-request-sent-internal-event';
 
 export class FriendService {
     constructor(
         private friendRepository: FriendRepository,
         private friendRequestRepository: FriendRequestRepository,
-        private friendAddTokenRepository: FriendAddTokenRepository,
-        private userService: UserService,
-        private pushNotificationService: PushNotificationService
+        private friendAddTokenRepository: FriendAddTokenRepository
     ) {}
 
     public getFriendList(userId: UserId): Promise<Friend[]> {
@@ -119,15 +117,20 @@ export class FriendService {
             this.friendRequestRepository.removeFriendRequest(requestSender, receiver),
             this.friendRepository.insertFriends(requestSender, receiver),
         ]);
-        const receiverUsername = await this.userService.getUsername(receiver);
-        const notification = new PushNotification('MoveMore', `You are now friends with ${receiverUsername}`);
-        this.pushNotificationService.sendNotification(requestSender, notification);
+        const friendRequestAcceptedEvent = new FriendRequestAcceptedInternalEvent({
+            senderId: requestSender,
+            receiverId: receiver,
+        });
+        InternalEventBus.emit(friendRequestAcceptedEvent);
     }
 
     private async sendFriendRequest(requestSender: UserId, receiver: UserId) {
         await this.friendRequestRepository.sendFriendRequest(requestSender, receiver);
-        const notification = new PushNotification('MoveMore', 'You received a new friend request');
-        this.pushNotificationService.sendNotification(receiver, notification);
+        const friendRequestSentEvent = new FriendRequestSentInternalEvent({
+            senderId: requestSender,
+            receiverId: receiver,
+        });
+        InternalEventBus.emit(friendRequestSentEvent);
     }
 
     private generateFriendAddToken(): FriendAddToken {

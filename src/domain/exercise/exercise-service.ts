@@ -1,7 +1,7 @@
 import { ExerciseRepository } from './repository/exercise-repository';
 import { Exercise, ExerciseId, ExerciseSet, NewExercise } from './exercise';
 import { UserId } from '../user/user';
-import { ExerciseAbsolvedInternalEvent } from './exercise-absolved-internal-event';
+import { ExerciseAbsolvedInternalEvent } from './event/exercise-absolved-internal-event';
 import { InternalEventBus } from '../../general/internal-event/event-bus';
 
 export class ExerciseService {
@@ -9,6 +9,10 @@ export class ExerciseService {
 
     public async listExercises(userId: UserId): Promise<Exercise[]> {
         return this.exerciseRepository.listExercises(userId);
+    }
+
+    public async getFavoriteExercise(userId: UserId): Promise<Exercise> {
+        return this.exerciseRepository.getFavoriteExercise(userId);
     }
 
     public async findById(exerciseId: ExerciseId): Promise<Exercise> {

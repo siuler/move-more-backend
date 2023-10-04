@@ -2,7 +2,7 @@ import { Exercise, ExerciseSet, DBExercise, NewExercise, ExerciseId } from '../e
 import { Pool } from 'mysql2/promise';
 import { ExerciseNotFoundError } from '../exercise-error';
 import { asJavaScriptObject, isMySqlError } from '../../../repository/mysql/types';
-import { UserId } from '../../user/user';
+import { User, UserId } from '../../user/user';
 
 const QUERY_LIST_EXERCISES_SORTED = `
     SELECT 
@@ -15,8 +15,10 @@ const QUERY_LIST_EXERCISES_SORTED = `
         GROUP BY exercise_id
     ) counts
     ON exercise.id = counts.exercise_id
-    ORDER BY counts.count DESC;
+    ORDER BY counts.count DESC
 `;
+
+const QUERY_GET_FAVORITE_EXERCISE = QUERY_LIST_EXERCISES_SORTED + ' LIMIT 1';
 
 const QUERY_FIND_BY_ID = `SELECT * FROM exercise WHERE id=?`;
 
@@ -29,6 +31,11 @@ export class ExerciseRepository {
     public async listExercises(userId: UserId): Promise<Exercise[]> {
         const [exercises] = await this.connectionPool.query<DBExercise[]>(QUERY_LIST_EXERCISES_SORTED, [userId]);
         return exercises.map(asJavaScriptObject);
+    }
+
+    public async getFavoriteExercise(userId: UserId): Promise<Exercise> {
+        const [exercises] = await this.connectionPool.query<DBExercise[]>(QUERY_GET_FAVORITE_EXERCISE, [userId]);
+        return asJavaScriptObject(exercises[0]);
     }
 
     public async findById(exerciseId: ExerciseId): Promise<Exercise> {

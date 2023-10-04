@@ -1,23 +1,26 @@
-import { DBIsUserAvailableResult, DBUser, InsertUserPayload, User, UserId } from './user';
+import { DBUser, InsertUserPayload, MinimalUser, User, UserId } from './user';
 import { Pool } from 'mysql2/promise';
 import { UserExistsError, UserNotFoundError } from './user-error';
 import { IUpdateResponse, asJavaScriptObject } from '../../repository/mysql/types';
+import { DBRowCount } from '../../general/mysql';
 
 const STMT_INSERT_USER = `INSERT INTO user(email, username, password_hash) VALUES(?,?,?)`;
 const STMT_UPDATE_PASSWORD = `UPDATE user SET password_hash = ? WHERE id = ?`;
 
-const QUERY_IS_USERNAME_AVAILABLE = `SELECT COUNT(id) as row_count_with_this_username FROM user WHERE username = ?`;
+const QUERY_IS_USERNAME_AVAILABLE = `SELECT COUNT(id) as row_count FROM user WHERE username = ?`;
 
 const QUERY_FIND_USER_BY_ID = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE id = ?`;
 const QUERY_FIND_USER_BY_NAME = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE username = ?`;
 const QUERY_FIND_USER_BY_EMAIL = `SELECT id,email,username,password_hash,register_date,verified_date,provider FROM user WHERE email = ?`;
 
+const QUERY_LIST_USERS = `SELECT id,username FROM user LIMIT ? OFFSET ?`;
+
 export class UserRepository {
     constructor(private connectionPool: Pool) {}
 
     public async isUsernameAvailable(username: string): Promise<boolean> {
-        const [isTaken] = await this.connectionPool.query<[DBIsUserAvailableResult]>(QUERY_IS_USERNAME_AVAILABLE, [username]);
-        return isTaken[0].row_count_with_this_username === 0;
+        const [isTaken] = await this.connectionPool.query<[DBRowCount]>(QUERY_IS_USERNAME_AVAILABLE, [username]);
+        return isTaken[0].row_count === 0;
     }
 
     public async create(user: InsertUserPayload): Promise<UserId> {
@@ -59,6 +62,11 @@ export class UserRepository {
             throw new UserNotFoundError('could not find user by email');
         }
         return asJavaScriptObject(foundUsers[0]);
+    }
+
+    public async listUsers(amount: number, offset: number): Promise<MinimalUser[]> {
+        const [foundUsers] = await this.connectionPool.query<DBUser[]>(QUERY_LIST_USERS, [amount, offset]);
+        return foundUsers.map(asJavaScriptObject);
     }
 
     public async updatePassword(userId: UserId, passwordHash: string) {

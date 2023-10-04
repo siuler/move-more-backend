@@ -9,3 +9,7 @@ export function validateDate(date: string): date is DateString {
 export function parseJwt(token: string) {
     return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
 }
+
+export function waitSeconds(seconds: number) {
+    return new Promise(resolve => setTimeout(resolve, seconds * 1000));
+}

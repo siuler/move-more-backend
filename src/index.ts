@@ -59,13 +59,7 @@ migrate().then(async () => {
     const friendRepository = new FriendRepository(connectionPool);
     const friendRequestRepository = new FriendRequestRepository(connectionPool);
     const friendAddTokenRepository = new FriendAddTokenRepository(connectionPool);
-    const friendService = new FriendService(
-        friendRepository,
-        friendRequestRepository,
-        friendAddTokenRepository,
-        userService,
-        pushNotificationService
-    );
+    const friendService = new FriendService(friendRepository, friendRequestRepository, friendAddTokenRepository);
 
     const rankingRepository = new RankingRepository(connectionPool);
     const rankingService = new RankingService(rankingRepository, friendService);
