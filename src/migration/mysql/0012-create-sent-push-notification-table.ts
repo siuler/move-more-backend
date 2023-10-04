@@ -1,7 +1,7 @@
 import { Migration } from '../migration';
 import { USER_ID_TYPE } from '../types';
 
-export default class MigrationCreateFriendAddTokenTable extends Migration {
+export default class MigrationCreateSentPushNotificationTable extends Migration {
     public readonly migrationVersion = 12;
     async up(): Promise<void> {
         await this.connection.execute(`
