@@ -29,7 +29,7 @@ export class RankingService {
         const scoreBefore = scoreAfter - exerciseSet.repetitions;
 
         const overtakenUsers = currentRanking
-            .filter(rankedUser => rankedUser.score > scoreBefore && rankedUser.score < scoreAfter)
+            .filter(rankedUser => rankedUser.score > 0 && rankedUser.score >= scoreBefore && rankedUser.score < scoreAfter)
             .map(rankedUser => rankedUser.userId);
         return overtakenUsers;
     }
