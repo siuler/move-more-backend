@@ -10,7 +10,7 @@ const QUERY_GET_TOKENS = `SELECT token FROM push_notification_token WHERE user_i
 
 const STMT_INSERT_SENT_NOTIFICATION = `INSERT INTO sent_push_notification(receiver_id,notification_type) VALUES(?,?)`;
 
-const QUERY_GET_RECEIVED_NOTIFICATION_COUNT_SINCE = `SELECT COUNT(*) FROM sent_push_notification WHERE receiver_id=? AND notification_type=? AND timestamp >= ?`;
+const QUERY_GET_RECEIVED_NOTIFICATION_COUNT_SINCE = `SELECT COUNT(*) as row_count FROM sent_push_notification WHERE receiver_id=? AND notification_type=? AND timestamp >= ?`;
 
 export class PushNotificationRepository {
     constructor(private connectionPool: Pool) {}
