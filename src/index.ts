@@ -91,11 +91,14 @@ migrate().then(async () => {
     new PushNotificationInternalEventListener(rankingService, pushNotificationService, exerciseService, userService);
     Logger.info('PushNotification listener registered');
 
-    process.on('SIGINT', async () => {
-        setTimeout(() => process.exit(1), 10 * 1000);
-        console.info('SIGINT received. Stopping server...');
-        await server.stop();
-        console.info('MoveMore server stopped');
-        process.exit(0);
-    });
+    process.on('SIGINT', () => shutdown(server));
+    process.on('SIGTERM', () => shutdown(server));
 });
+
+async function shutdown(server: MoveMoreServer) {
+    setTimeout(() => process.exit(1), 10 * 1000);
+    console.info('SIGINT or SIGTERM received. Stopping server...');
+    await server.stop();
+    console.info('MoveMore server stopped');
+    process.exit(0);
+}
