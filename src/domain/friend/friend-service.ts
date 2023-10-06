@@ -73,14 +73,15 @@ export class FriendService {
         return this.friendRequestRepository.removeFriendRequest(rejectedUserId, userId);
     }
 
-    public async removeFriend(friend1: UserId, friend2: UserId) {
-        if (!(await this.friendRepository.areFriends(friend1, friend2))) {
+    public async removeFriend(removingUser: UserId, removedUser: UserId): Promise<FriendAddToken> {
+        if (!(await this.friendRepository.areFriends(removingUser, removedUser))) {
             throw new NotFriendsError();
         }
-        return this.friendRepository.removeFriend(friend1, friend2);
+        await this.friendRepository.removeFriend(removingUser, removedUser);
+        return this.createFriendAddToken(removedUser, 10);
     }
 
-    public async createFriendAddToken(addableUser: UserId, validitySeconds: number) {
+    public async createFriendAddToken(addableUser: UserId, validitySeconds: number): Promise<FriendAddToken> {
         let retries = 0;
         while (retries < 5) {
             try {
@@ -96,6 +97,7 @@ export class FriendService {
                 throw e;
             }
         }
+        throw new Error('unexpected error: unable to create friend add token');
     }
 
     public async redeemFriendAddToken(redeemer: UserId, token: FriendAddToken) {

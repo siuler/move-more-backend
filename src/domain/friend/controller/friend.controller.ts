@@ -150,8 +150,8 @@ export class FriendController implements RouteTarget {
     public async removeFriend(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
         const params = request.params as RemoveFriendParams;
         try {
-            await this.friendService.removeFriend(request.userId, params.friendId);
-            reply.status(200).send();
+            const readdToken = await this.friendService.removeFriend(request.userId, params.friendId);
+            reply.status(200).send(readdToken);
         } catch (error: unknown) {
             if (error instanceof NotFriendsError) {
                 throw new BadRequestError('you were not friends');
