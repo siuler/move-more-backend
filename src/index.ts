@@ -36,50 +36,37 @@ import { PushNotificationRepository } from './domain/messaging/push-notification
 import { PushNotificationInternalEventListener } from './domain/messaging/push-notification/push-notification-internal-event-listener';
 import { FriendAddTokenRepository } from './domain/friend/friend-add-token-repository';
 
-Logger.info('Running database migrations...');
 migrate().then(async () => {
-    Logger.info('Initializing mysql connection pool');
     await MysqlConnectionPool.initialize();
     const connectionPool = MysqlConnectionPool.getInstance();
-
-    Logger.info('Initializing Mail Client');
     const mailClient = new MailClient();
 
-    Logger.info('Initializing Push Notifications');
     const pushNotificationRepository = new PushNotificationRepository(connectionPool);
     const pushNotificationService = new PushNotificationService(pushNotificationRepository);
 
-    Logger.info('Initializing tokens');
     const tokenRepository = new TokenRepository(connectionPool);
     const tokenService = new TokenService(JWT_PRIVATE_KEY, tokenRepository);
 
-    Logger.info('Initializing users');
     const userRepository = new UserRepository(connectionPool);
     const userService = new UserService(userRepository, tokenService);
 
-    Logger.info('Initializing OAuth');
     const oAuthRepository = new OAuthRepository(connectionPool);
     const oAuthService = new OAuthService(oAuthRepository, tokenService, userService);
 
-    Logger.info('Initializing account recovery');
     const recoveryCodeRepository = new RecoveryCodeRepository(connectionPool);
     const recoverAccountService = new RecoverAccountService(mailClient, userService, recoveryCodeRepository);
 
-    Logger.info('Initializing friends');
     const friendRepository = new FriendRepository(connectionPool);
     const friendRequestRepository = new FriendRequestRepository(connectionPool);
     const friendAddTokenRepository = new FriendAddTokenRepository(connectionPool);
     const friendService = new FriendService(friendRepository, friendRequestRepository, friendAddTokenRepository);
 
-    Logger.info('Initializing ranking');
     const rankingRepository = new RankingRepository(connectionPool);
     const rankingService = new RankingService(rankingRepository, friendService);
 
-    Logger.info('Initializing statistics');
     const statisticRepository = new StatisticRepository(connectionPool);
     const statisticService = new StatisticService(statisticRepository);
 
-    Logger.info('Initializing exercises');
     const exerciseRepository = new ExerciseRepository(connectionPool);
     const exerciseService = new ExerciseService(exerciseRepository);
 
@@ -96,10 +83,8 @@ migrate().then(async () => {
         new ExerciseController(exerciseService),
     ];
 
-    Logger.info('Initializing server');
     const server = new MoveMoreServer(controllers);
 
-    Logger.info('Starting server');
     await server.start();
     Logger.info('MoveMore server started');
 

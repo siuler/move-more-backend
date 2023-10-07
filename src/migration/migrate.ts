@@ -6,9 +6,12 @@ import { Logger } from '../general/logger';
 import * as path from 'path';
 
 export async function migrate() {
+    Logger.info('Connecting to mySQL Database...');
     const connection = await connect();
+    Logger.info('Creating database...');
     await createDatabase(connection);
 
+    Logger.info('running migrations...');
     await runMigrations(connection);
 }
 
@@ -28,38 +31,49 @@ async function createDatabase(connection: Connection) {
 }
 
 async function runMigrations(connection: Connection) {
+    Logger.info('Getting current migration version');
     const currentMigrationVersion = await getCurrentMigrationVersion(connection);
-
+    Logger.info('Current migration version:', currentMigrationVersion);
+    Logger.info('Retrieving all migration files');
     const migrations = await getMigrations();
 
     let upgradedVersion = currentMigrationVersion;
+    Logger.info('Applying all migrations...');
     for (const migrationClass of migrations) {
+        Logger.info('instantiating a migration');
         const migration = new migrationClass(connection);
+        Logger.info('migration', migration.migrationVersion, 'instantiated');
         if (migration.migrationVersion <= currentMigrationVersion) {
             continue;
         }
         if (upgradedVersion > migration.migrationVersion) {
             throw new Error('Database Migrations are not sorted in correct order. Version number must be array index + 1');
         }
+        Logger.info('applying migration');
         await migration.up();
         upgradedVersion = migration.migrationVersion;
     }
 
+    Logger.info('saving upgraded migration version to database');
     await saveUpgradedMigrationVersion(connection, upgradedVersion);
 }
 
 async function getMigrations() {
     const migrations = [];
     const migrationsDirectory = path.join(__dirname, 'mysql');
+    Logger.info('Reading directory');
     const files = fs.readdirSync(migrationsDirectory);
+    Logger.info('Done. Found', files.length, 'files');
     for (const file of files) {
         Logger.warnIf(!file.endsWith('.ts'), 'found file in migrations folder that is not a .ts file', file);
         const filePath = path.join(migrationsDirectory, file);
+        Logger.info('importing', file.toString());
         const module = await import(filePath);
         if (!module.default) {
             Logger.warn('found migration without default export', file);
             continue;
         }
+        Logger.info('adding to migration list');
         migrations.push(module.default);
     }
     return migrations;
