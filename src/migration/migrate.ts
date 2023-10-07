@@ -53,7 +53,7 @@ async function getMigrations() {
     const migrationsDirectory = path.join(__dirname, 'mysql');
     const files = fs.readdirSync(migrationsDirectory);
     for (const file of files) {
-        Logger.warnIf(!file.endsWith('.ts'), 'found file in migrations folder that is not a .ts file', file);
+        Logger.warnIf(!file.endsWith('.ts') && !file.endsWith('.js'), 'found file in migrations folder that is not a .ts file', file);
         const filePath = path.join(migrationsDirectory, file);
         const module = await import(filePath);
         if (!module.default) {
