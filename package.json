@@ -5,6 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "ts-node src/index.ts",
+    "build-pipeline": "npm ci && npm run build",
+    "build": "tsc -p tsconfig.prod.json && npm run build-copy-files",
+    "build-copy-files": "npm run build-copy-ssl && npm run build-copy-config",
+    "build-copy-ssl": "cp src/general/server/ssl/* dist/general/server/ssl && rm dist/general/server/ssl/*.ts",
+    "build-copy-config": "cp src/config/config.prod.json dist/config/config.json",
     "lint:fix": "eslint --max-warnings 0 \"./**/*.ts\" --fix",
     "test": "jest --config=jest.config.ts",
     "setup": "nvm use && npm ci",
