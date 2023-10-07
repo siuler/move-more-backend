@@ -5,3 +5,4 @@
 jest/
 node_modules/
 src/
+build/
