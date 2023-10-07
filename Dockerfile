@@ -2,8 +2,11 @@ FROM --platform=linux/amd64 node:18
 
 WORKDIR /usr/src/app
 
-COPY ./dist .
+COPY package*.json ./
+RUN npm install
+
+COPY . .
 
 EXPOSE 8080
 
-CMD ["node", "index.js"]
+CMD ["node", "dist/index.js"]
