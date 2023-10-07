@@ -1,3 +1,4 @@
+import { Logger } from '../../logger';
 import { ControllerError } from '../controller/error/controller-error';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
@@ -5,13 +6,13 @@ export function fastifyErrorHandler(error: Error, request: FastifyRequest, reply
     if (isControllerError(error)) {
         const statusCode = error.statusCode;
         if (statusCode >= 500) {
-            console.error(error);
+            Logger.error(error);
         }
         return reply.status(statusCode).send({
             error: error.message,
         });
     }
-    console.error(error);
+    Logger.error(error);
     reply.status(500).send({
         error: 'something unexpected happened. Please try again later',
     });

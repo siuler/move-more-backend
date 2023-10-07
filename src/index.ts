@@ -97,8 +97,8 @@ migrate().then(async () => {
 
 async function shutdown(server: MoveMoreServer) {
     setTimeout(() => process.exit(1), 10 * 1000);
-    console.info('SIGINT or SIGTERM received. Stopping server...');
+    Logger.info('SIGINT or SIGTERM received. Stopping server...');
     await server.stop();
-    console.info('MoveMore server stopped');
+    Logger.info('MoveMore server stopped');
     process.exit(0);
 }
