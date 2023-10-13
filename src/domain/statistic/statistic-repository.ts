@@ -4,7 +4,9 @@ import { InvalidTimespanError } from '../../general/error';
 import { asJavaScriptObject } from '../../repository/mysql/types';
 import { UserId } from '../user/user';
 
-function buildStatsQuery(periodStartDateClause: string) {
+const statisticPacketSize = 10;
+
+function buildStatsQuery(periodStartDateClause: string, intervalName: 'DAY' | 'WEEK' | 'MONTH') {
     return `
         SELECT 
             SUM(repetitions) AS score, 
@@ -13,15 +15,16 @@ function buildStatsQuery(periodStartDateClause: string) {
         WHERE user_id = ? 
             AND exercise_id = ?
             AND timestamp < COALESCE(?, NOW())
+            AND timestamp > DATE_SUB(COALESCE(?, NOW()), INTERVAL ${statisticPacketSize} ${intervalName})
         GROUP BY period_start_date
         ORDER BY timestamp DESC
-        LIMIT 10
+        LIMIT ${statisticPacketSize}
     `;
 }
 
-const QUERY_GET_STATS_DAILY = buildStatsQuery('DATE(timestamp)');
-const QUERY_GET_STATS_WEEKLY = buildStatsQuery('DATE_SUB(DATE(timestamp), INTERVAL WEEKDAY(timestamp) DAY)');
-const QUERY_GET_STATS_MONTHLY = buildStatsQuery('DATE_SUB(DATE(timestamp), INTERVAL DAYOFMONTH(timestamp)-1 DAY)');
+const QUERY_GET_STATS_DAILY = buildStatsQuery('DATE(timestamp)', 'DAY');
+const QUERY_GET_STATS_WEEKLY = buildStatsQuery('DATE_SUB(DATE(timestamp), INTERVAL WEEKDAY(timestamp) DAY)', 'WEEK');
+const QUERY_GET_STATS_MONTHLY = buildStatsQuery('DATE_SUB(DATE(timestamp), INTERVAL DAYOFMONTH(timestamp)-1 DAY)', 'MONTH');
 
 export class StatisticRepository {
     constructor(private connectionPool: Pool) {}
@@ -32,6 +35,7 @@ export class StatisticRepository {
         const [statisticPacketItems] = await this.connectionPool.query<DBStatisticPacketItem[]>(query, [
             userId,
             metadata.exerciseId,
+            metadata.firstDateNotToInclude ?? null,
             metadata.firstDateNotToInclude ?? null,
         ]);
         const items = statisticPacketItems.map(asJavaScriptObject);
