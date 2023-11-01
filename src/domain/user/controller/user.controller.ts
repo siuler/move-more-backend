@@ -29,6 +29,7 @@ export class UserController implements RouteTarget {
             },
             { url: '/user/login', method: 'POST', handler: this.login.bind(this), schema: LOGIN_SCHEMA },
             { url: '/user/register', method: 'POST', handler: this.register.bind(this), schema: REGISTER_SCHEMA },
+            { url: '/user/logout', method: 'GET', preValidation: authenticate, handler: this.logout.bind(this) },
             { url: '/user', method: 'DELETE', preValidation: authenticate, handler: this.delete.bind(this) },
         ];
     }
@@ -69,6 +70,11 @@ export class UserController implements RouteTarget {
             throw error;
         }
 
+        reply.status(200).send();
+    }
+
+    public async logout(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
+        await this.userService.logout(request.userId);
         reply.status(200).send();
     }
 

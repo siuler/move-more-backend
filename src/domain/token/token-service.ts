@@ -26,6 +26,10 @@ export class TokenService {
         return this.generateAndStoreTokenPair(userId);
     }
 
+    public async deleteTokenPair(userId: UserId) {
+        return this.tokenRepository.deleteTokenPair(userId);
+    }
+
     private generateJWTToken(userId: UserId): string {
         return jwt.sign({ uid: userId }, this.secret, { expiresIn: '5min' });
     }

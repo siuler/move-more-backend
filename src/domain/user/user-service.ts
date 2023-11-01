@@ -90,6 +90,10 @@ export class UserService {
         return this.userRepository.create(userRow);
     }
 
+    public async logout(userId: UserId): Promise<void> {
+        await this.tokenService.deleteTokenPair(userId);
+    }
+
     public async delete(userId: UserId): Promise<boolean> {
         return this.userRepository.delete(userId);
     }
