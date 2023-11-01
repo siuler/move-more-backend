@@ -90,6 +90,10 @@ export class UserService {
         return this.userRepository.create(userRow);
     }
 
+    public async delete(userId: UserId): Promise<boolean> {
+        return this.userRepository.delete(userId);
+    }
+
     public async updatePassword(userId: UserId, password: string): Promise<boolean> {
         if (!this.validatePasswordFormat(password)) {
             throw new ValidationError('password does not satisfy all requirements');

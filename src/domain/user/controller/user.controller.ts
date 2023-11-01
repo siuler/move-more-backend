@@ -13,6 +13,8 @@ import { RouteTarget } from '../../../general/server/controller/route-target';
 import { ValidationError } from '../../../general/error';
 import { UserNotFoundError, WrongPasswordError, UserExistsError } from '../user-error';
 import { UserService } from '../user-service';
+import { authenticate } from '../../../general/server/middleware/authentication';
+import { AuthenticatedFastifyRequest } from '../../../general/server/middleware/authenticated-request';
 
 export class UserController implements RouteTarget {
     constructor(private userService: UserService) {}
@@ -27,6 +29,7 @@ export class UserController implements RouteTarget {
             },
             { url: '/user/login', method: 'POST', handler: this.login.bind(this), schema: LOGIN_SCHEMA },
             { url: '/user/register', method: 'POST', handler: this.register.bind(this), schema: REGISTER_SCHEMA },
+            { url: '/user', method: 'DELETE', preValidation: authenticate, handler: this.delete.bind(this) },
         ];
     }
 
@@ -67,5 +70,18 @@ export class UserController implements RouteTarget {
         }
 
         reply.status(200).send();
+    }
+
+    public async delete(request: AuthenticatedFastifyRequest, reply: FastifyReply) {
+        const userId = request.userId;
+        try {
+            await this.userService.delete(userId);
+            reply.status(200).send();
+        } catch (error: unknown) {
+            if (error instanceof UserNotFoundError) {
+                throw new BadRequestError('user not found');
+            }
+            throw error;
+        }
     }
 }

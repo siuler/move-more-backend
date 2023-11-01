@@ -6,6 +6,7 @@ import { DBRowCount } from '../../general/mysql';
 
 const STMT_INSERT_USER = `INSERT INTO user(email, username, password_hash) VALUES(?,?,?)`;
 const STMT_UPDATE_PASSWORD = `UPDATE user SET password_hash = ? WHERE id = ?`;
+const STMT_DELETE_USER = `DELETE FROM user WHERE id = ?`;
 
 const QUERY_IS_USERNAME_AVAILABLE = `SELECT COUNT(id) as row_count FROM user WHERE username = ?`;
 
@@ -71,6 +72,14 @@ export class UserRepository {
 
     public async updatePassword(userId: UserId, passwordHash: string) {
         const result = await this.connectionPool.execute<IUpdateResponse>(STMT_UPDATE_PASSWORD, [passwordHash, userId]);
+        return result[0].affectedRows == 1;
+    }
+
+    public async delete(userId: UserId) {
+        const result = await this.connectionPool.execute<IUpdateResponse>(STMT_DELETE_USER, [userId]);
+        if (result[0].affectedRows == 0) {
+            throw new UserNotFoundError();
+        }
         return result[0].affectedRows == 1;
     }
 }
