@@ -8,7 +8,7 @@ import { AuthResponse } from '../token/auth-token-pair';
 
 const EMAIL_VALIDATION_PATTERN =
     /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
-const USERNAME_VALIDATION_PATTERN = /^[a-zA-Z0-9]{5,16}$/;
+const USERNAME_VALIDATION_PATTERN = /^[a-zA-Z0-9._]{5,16}$/;
 
 export class UserService {
     constructor(private userRepository: UserRepository, private tokenService: TokenService) {}
