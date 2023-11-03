@@ -20,7 +20,7 @@ export class UserService {
 
     public async isEmailInUse(email: string): Promise<boolean> {
         try {
-            const user = await this.userRepository.findByEmail(email);
+            const user = await this.userRepository.findByEmail(email.toLowerCase());
             return !!user;
         } catch (e) {
             if (e instanceof UserNotFoundError) {
@@ -32,7 +32,7 @@ export class UserService {
 
     public async findByEmailOrUsername(emailOrUsername: string): Promise<User> {
         if (emailOrUsername.includes('@')) {
-            return await this.userRepository.findByEmail(emailOrUsername);
+            return await this.userRepository.findByEmail(emailOrUsername.toLowerCase());
         } else {
             return await this.userRepository.findByName(emailOrUsername);
         }
@@ -46,7 +46,7 @@ export class UserService {
         if (!this.validateUsernameFormat(username)) {
             return false;
         }
-        return this.userRepository.isUsernameAvailable(username);
+        return this.userRepository.isUsernameAvailable(username.toLowerCase());
     }
 
     public async login(emailOrUsername: string, password: string): Promise<AuthResponse> {
@@ -66,6 +66,7 @@ export class UserService {
     }
 
     public async register(email: string, username: string, password?: string): Promise<UserId> {
+        email = email.toLowerCase();
         if (!this.validateEmailFormat(email)) {
             throw new ValidationError('email is invalid');
         }
