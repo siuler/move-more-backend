@@ -20,6 +20,8 @@ export class RankingTimespans {
     static RANKING_7_DAYS: RankingTimespan = 7;
     static RANKING_30_DAYS: RankingTimespan = 30;
 
+    static values: RankingTimespan[] = [this.RANKING_1_DAY, this.RANKING_7_DAYS, this.RANKING_30_DAYS];
+
     public static fromRequestTimespan(timespan: RequestRankingTimespan): RankingTimespan {
         switch (timespan) {
             case '1day':

@@ -3,3 +3,5 @@ export function makeUniqueDummy<T>(): T {
         uniqueId: Math.random(),
     } as T;
 }
+
+export const anything = {} as any;
