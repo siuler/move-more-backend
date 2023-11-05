@@ -1,4 +1,5 @@
 import { anything, makeUniqueDummy } from '../../../jest/util';
+import { ExerciseSet } from '../exercise/exercise';
 import { Friend } from '../friend/friend';
 import { FriendService } from '../friend/friend-service';
 import { UserId } from '../user/user';
@@ -54,5 +55,41 @@ describe('ranking-service', () => {
             }
         );
     });
-    describe('getOvertakenFriends', () => {});
+    describe('getOvertakenFriends', () => {
+        it.each([
+            [1, []],
+            [2, []],
+            [5, [2]],
+            [6, [2]],
+            [8, [2]],
+            [10, [2, 3]],
+            [11, [2, 3]],
+            [110, [2, 3]],
+        ])(
+            'should return users that have been overtaken by the given exerciseSet with %s repetitions',
+            async (repetitions, expectedOvertakenUserIds) => {
+                //given
+                jest.spyOn(friendServiceMock, 'getFriendList').mockResolvedValue([]);
+
+                const rankingAfterTraining: RankedUser[] = [
+                    { userId: 1, username: 'user1', score: 20 },
+                    { userId: 2, username: 'user2', score: 15 },
+                    { userId: 3, username: 'user3', score: 10 },
+                ];
+                jest.spyOn(rankingRepositoryMock, 'rankUserIds').mockResolvedValue(rankingAfterTraining);
+
+                const performedExerciseSet: ExerciseSet = {
+                    exerciseId: 1,
+                    repetitions,
+                    userId: 1,
+                };
+
+                //when
+                const overtakenUsers = await rankingService.getOvertakenFriends(performedExerciseSet, RankingTimespans.RANKING_1_DAY);
+
+                //then
+                expect(overtakenUsers).toEqual(expectedOvertakenUserIds);
+            }
+        );
+    });
 });
