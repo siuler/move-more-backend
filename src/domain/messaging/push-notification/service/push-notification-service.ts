@@ -73,7 +73,13 @@ export class PushNotificationService {
             │    └──────────────────── minute (0 - 59)
             └───────────────────────── second (0 - 59, OPTIONAL)
          */
-        scheduleJob('0 0 8 * * *', () => InternalEventBus.emit(new NobodyMovedNotificationTimeEvent()));
+        scheduleJob('0 0 7 * * *', () => {
+            const maxMinuteOffset = 60 * 3; // 3 hours
+            const minuteOffset = Math.random() * maxMinuteOffset;
+            setTimeout(() => {
+                InternalEventBus.emit(new NobodyMovedNotificationTimeEvent());
+            }, 1000 * 60 * minuteOffset);
+        });
     }
 
     private createPushMessage(token: string, notification: PushNotification): Message {
