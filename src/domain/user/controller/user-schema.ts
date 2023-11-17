@@ -47,3 +47,17 @@ export const IS_USERNAME_AVAILABLE_SCHEMA: FastifySchema = {
 export type IsUsernameAvailableParams = {
     username: string;
 };
+
+export const IS_EMAIL_AVAILABLE_SCHEMA: FastifySchema = {
+    params: {
+        type: 'object',
+        properties: {
+            email: { type: 'string' },
+        },
+        required: ['email'],
+    },
+};
+
+export type IsEmailAvailableParams = {
+    email: string;
+};

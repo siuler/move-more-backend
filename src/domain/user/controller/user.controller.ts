@@ -6,6 +6,8 @@ import {
     REGISTER_SCHEMA,
     RegisterPayload,
     IsUsernameAvailableParams,
+    IS_EMAIL_AVAILABLE_SCHEMA,
+    IsEmailAvailableParams,
 } from './user-schema';
 import { BadRequestError } from '../../../general/server/controller/error/bad-request-error';
 import { ConflictError } from '../../../general/server/controller/error/conflict-error';
@@ -27,6 +29,12 @@ export class UserController implements RouteTarget {
                 handler: this.isUsernameAvailable.bind(this),
                 schema: IS_USERNAME_AVAILABLE_SCHEMA,
             },
+            {
+                url: '/user/email/:email/status',
+                method: 'GET',
+                handler: this.isEmailAvailable.bind(this),
+                schema: IS_EMAIL_AVAILABLE_SCHEMA,
+            },
             { url: '/user/login', method: 'POST', handler: this.login.bind(this), schema: LOGIN_SCHEMA },
             { url: '/user/register', method: 'POST', handler: this.register.bind(this), schema: REGISTER_SCHEMA },
             { url: '/user/logout', method: 'GET', preValidation: authenticate, handler: this.logout.bind(this) },
@@ -37,8 +45,20 @@ export class UserController implements RouteTarget {
     public async isUsernameAvailable(request: FastifyRequest, reply: FastifyReply) {
         const params = request.params as IsUsernameAvailableParams;
         const isAvailable = await this.userService.isUsernameAvailable(params.username);
-
         reply.status(200).send({ isAvailable });
+    }
+
+    public async isEmailAvailable(request: FastifyRequest, reply: FastifyReply) {
+        const params = request.params as IsEmailAvailableParams;
+        try {
+            const isInUse = await this.userService.isEmailInUse(params.email);
+            reply.status(200).send({ isAvailable: !isInUse });
+        } catch (e) {
+            if (e instanceof ValidationError) {
+                throw new BadRequestError(e.message);
+            }
+            throw e;
+        }
     }
 
     public async login(request: FastifyRequest, reply: FastifyReply) {

@@ -19,6 +19,9 @@ export class UserService {
     }
 
     public async isEmailInUse(email: string): Promise<boolean> {
+        if (!this.validateEmailFormat(email)) {
+            throw new ValidationError('email is invalid');
+        }
         try {
             const user = await this.userRepository.findByEmail(email.toLowerCase());
             return !!user;
